@@ -1,321 +1,49 @@
-﻿# Infosys AI Knowledge Assistant – Enterprise GPT
+﻿# 🚀 Infosys AI Knowledge Assistant – Enterprise GPT
 
-An enterprise-grade AI Knowledge Assistant that enables Infosys employees to securely search, retrieve, and interact with internal knowledge using Retrieval-Augmented Generation (RAG), Model Context Protocol (MCP), and Large Language Models (LLMs).
+An enterprise-grade AI-powered Knowledge Assistant that enables Infosys employees to securely search, retrieve, and interact with internal organizational knowledge using Retrieval-Augmented Generation (RAG), Google Gemini, and Model Context Protocol (MCP).
 
-The platform ingests enterprise documents such as SOPs, HR policies, project manuals, engineering guides, and sales assets, indexes them into a vector database, and provides citation-backed answers while enforcing role-based access control.
-
----
-
-# Features
-
-- Enterprise AI Assistant
-- Retrieval-Augmented Generation (RAG)
-- Document Upload & Knowledge Ingestion
-- Semantic Search using ChromaDB
-- Citation-Based Answers
-- Role-Based Access Control (RBAC)
-- MCP Connector Architecture
-- Analytics Dashboard
-- Knowledge Governance
-- Audit Logging
-- Feedback Collection
-- Department-specific Knowledge Workspaces
+The platform transforms enterprise documents such as SOPs, HR policies, project manuals, engineering guides, and sales assets into a searchable knowledge base, providing fast, reliable, and citation-backed answers while enforcing role-based access control.
 
 ---
 
-# Architecture
+# 🛠️ Tech Stack
 
-```
-Employee Query
-        │
-        ▼
-Query Classification
-        │
-        ▼
-MCP Tool Selection
-        │
-        ▼
-Document Retrieval (RAG)
-        │
-        ▼
-LLM Synthesis (Gemini)
-        │
-        ▼
-Citation Builder
-        │
-        ▼
-Enterprise GPT Response
-```
-
----
-
-# Technology Stack
-
-## Frontend
-
-- Next.js
+### Frontend
+- Next.js 15
 - React
 - TypeScript
 - Tailwind CSS
 - ShadCN UI
 
-## Backend
-
+### Backend
 - FastAPI
 - Python
 - SQLAlchemy
 - JWT Authentication
 
-## AI
-
+### AI & RAG
 - Google Gemini
 - LangChain
 - LangGraph
-
-## Database
-
-- Supabase PostgreSQL
 - ChromaDB
 
-## Document Processing
+### Database
+- Supabase PostgreSQL
 
+### Document Processing
 - PyPDF
 - python-docx
 - Unstructured
 
-## Deployment
-
+### Deployment
 - Vercel
 - Render
 
 ---
 
-# Repository Structure
+# ⚡ Quick Start
 
-```
-infosys-ai-knowledge-assistant-enterprise-gpt/
-
-├── README.md
-├── .env.example
-
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── pages/
-│   └── styles/
-
-├── backend/
-│   ├── api/
-│   ├── auth/
-│   ├── services/
-│   ├── connectors/
-│   ├── database/
-│   └── audit/
-
-├── ingestion_pipeline/
-│   ├── upload/
-│   ├── document_parsing/
-│   ├── chunking/
-│   ├── metadata_tagging/
-│   ├── embedding_jobs/
-│   └── refresh_jobs/
-
-├── ai_workflows/
-│   ├── query_classification/
-│   ├── mcp_tool_selection/
-│   ├── rag_retrieval/
-│   ├── grounded_synthesis/
-│   ├── citation_builder/
-│   └── evaluation/
-
-├── data/
-│   ├── sample_sops/
-│   ├── sample_hr_policies/
-│   ├── sample_project_manuals/
-│   ├── sample_engineering_guides/
-│   └── sample_sales_assets/
-
-├── docs/
-│   ├── architecture.md
-│   ├── api_documentation.md
-│   ├── connector_setup.md
-│   ├── security_notes.md
-│   ├── demo_script.md
-│   └── screenshots/
-
-├── tests/
-│   ├── functional_tests/
-│   ├── ingestion_tests/
-│   ├── retrieval_tests/
-│   ├── ai_output_tests/
-│   └── access_control_tests/
-
-└── deployment/
-    ├── vercel_notes.md
-    ├── netlify_notes.md
-    ├── backend_hosting_notes.md
-    └── environment_setup.md
-```
-
----
-
-# Project Workflow
-
-```
-Upload Documents
-
-↓
-
-Validate Documents
-
-↓
-
-Extract Text
-
-↓
-
-Chunk Documents
-
-↓
-
-Generate Embeddings
-
-↓
-
-Store in ChromaDB
-
-↓
-
-Employee Query
-
-↓
-
-Intent Classification
-
-↓
-
-MCP Tool Selection
-
-↓
-
-Semantic Retrieval
-
-↓
-
-Gemini Response Generation
-
-↓
-
-Citation Builder
-
-↓
-
-Final Answer
-```
-
----
-
-# AI Workflow
-
-The AI workflow consists of:
-
-- Query Classification
-- Intent Detection
-- MCP Tool Selection
-- Retrieval-Augmented Generation
-- Grounded Response Generation
-- Citation Generation
-- Confidence Scoring
-- Feedback Collection
-
----
-
-# Modules
-
-## Document Upload
-
-- Upload PDF
-- Upload DOCX
-- Upload TXT
-- Metadata Validation
-- Department Assignment
-
----
-
-## Knowledge Processing
-
-- Text Extraction
-- Document Chunking
-- Metadata Tagging
-- Embedding Generation
-- Vector Storage
-
----
-
-## Enterprise GPT
-
-- Natural Language Queries
-- Context Retrieval
-- Citation Support
-- Confidence Indicators
-- Source Preview
-
----
-
-## Administration
-
-- User Management
-- Document Management
-- Knowledge Governance
-- MCP Connector Management
-- Analytics Dashboard
-
----
-
-# Security
-
-- JWT Authentication
-- Role-Based Access Control
-- Department-Based Authorization
-- Secure API Keys
-- Audit Logging
-- Permission-aware Retrieval
-
----
-
-# Environment Variables
-
-Create a `.env` file using `.env.example`.
-
-Example:
-
-```env
-GEMINI_API_KEY=
-
-DATABASE_URL=
-
-SUPABASE_URL=
-
-SUPABASE_ANON_KEY=
-
-SUPABASE_SERVICE_ROLE_KEY=
-
-CHROMA_DB_PATH=./vector_store
-
-JWT_SECRET_KEY=
-
-JWT_ALGORITHM=HS256
-
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-
-UPLOAD_DIRECTORY=uploads
-```
-
----
-
-# Installation
-
-## Clone Repository
+## 1. Clone the Repository
 
 ```bash
 git clone https://github.com/<your-username>/infosys-ai-knowledge-assistant-enterprise-gpt.git
@@ -325,23 +53,31 @@ cd infosys-ai-knowledge-assistant-enterprise-gpt
 
 ---
 
-## Backend
+## 2. Install Frontend Dependencies
 
 ```bash
-cd backend
+cd frontend
+
+npm install
+```
+
+---
+
+## 3. Install Backend Dependencies
+
+```bash
+cd ../backend
 
 python -m venv venv
 ```
 
-Activate environment
-
-Windows
+### Windows
 
 ```bash
 venv\Scripts\activate
 ```
 
-Linux/macOS
+### Linux/macOS
 
 ```bash
 source venv/bin/activate
@@ -353,42 +89,68 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-Run backend
+---
 
-```bash
-uvicorn app.main:app --reload
+# ☁️ Set Up Supabase
+
+1. Go to the **Supabase Dashboard**
+2. Create a new project
+3. Wait until provisioning finishes
+4. Open
+
+```
+Settings
+    ├── API
+    └── Database
+```
+
+Copy the following values:
+
+- Project URL
+- Anon Key
+- Service Role Key
+- Database Connection String
+
+---
+
+# 🔑 Configure Environment Variables
+
+Create a `.env` file inside the **backend** folder.
+
+```env
+# Gemini
+GEMINI_API_KEY=your_gemini_api_key
+
+# Supabase
+DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres
+
+SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+
+SUPABASE_ANON_KEY=your_supabase_anon_key
+
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# Vector Database
+CHROMA_DB_PATH=./vector_store
+
+# Authentication
+JWT_SECRET_KEY=your_secret_key
+
+JWT_ALGORITHM=HS256
+
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# Uploads
+UPLOAD_DIRECTORY=uploads
 ```
 
 ---
 
-## Frontend
+# 🗄️ Database Setup
 
-```bash
-cd frontend
+Create a new SQL script inside the Supabase SQL Editor.
 
-npm install
-
-npm run dev
-```
-
----
-
-# API Modules
-
-- Authentication
-- Document Upload
-- Indexing
-- Query Processing
-- Retrieval
-- Citation Generation
-- Feedback
-- Analytics
-
----
-
-# Database
-
-Supabase PostgreSQL stores:
+The application will create tables for:
 
 - Users
 - Documents
@@ -397,82 +159,241 @@ Supabase PostgreSQL stores:
 - Feedback
 - Audit Logs
 - Query History
+- Knowledge Sources
 
-ChromaDB stores:
-
-- Embeddings
-- Document Chunks
-- Semantic Indexes
+Run the SQL migration before starting the application.
 
 ---
 
-# Testing
+# ▶️ Run the Backend
+
+```bash
+cd backend
+
+uvicorn app.main:app --reload
+```
+
+Backend will start at
 
 ```
-tests/
+http://localhost:8000
+```
 
-functional_tests/
+Swagger Documentation
 
-ingestion_tests/
-
-retrieval_tests/
-
-ai_output_tests/
-
-access_control_tests/
+```
+http://localhost:8000/docs
 ```
 
 ---
 
-# Deployment
+# ▶️ Run the Frontend
 
-Frontend
+```bash
+cd frontend
+
+npm run dev
+```
+
+Frontend will start at
+
+```
+http://localhost:3000
+```
+
+---
+
+# ✨ Features
+
+## Enterprise AI Assistant
+
+- Natural language search
+- Context-aware conversations
+- Citation-backed answers
+- Source previews
+- Confidence scores
+
+---
+
+## Knowledge Management
+
+- Upload PDF, DOCX, TXT
+- Automatic document parsing
+- Metadata tagging
+- Department assignment
+- Version management
+
+---
+
+## Retrieval-Augmented Generation (RAG)
+
+- Semantic document search
+- Vector embeddings
+- Context retrieval
+- Grounded AI responses
+- Citation generation
+
+---
+
+## MCP Connectors
+
+- File System
+- SharePoint (Planned)
+- Jira (Planned)
+- GitHub (Planned)
+- Confluence (Planned)
+
+---
+
+## Security
+
+- JWT Authentication
+- Role-Based Access Control (RBAC)
+- Department-level permissions
+- Secure API keys
+- Audit logging
+
+---
+
+## Analytics
+
+- Query analytics
+- Citation coverage
+- Retrieval quality
+- Failed search tracking
+- Feedback dashboard
+
+---
+
+# 📂 Project Structure
+
+```
+infosys-ai-knowledge-assistant-enterprise-gpt/
+
+├── frontend/
+├── backend/
+├── ingestion_pipeline/
+├── ai_workflows/
+├── data/
+├── docs/
+├── tests/
+└── deployment/
+```
+
+---
+
+# 🔐 Authentication
+
+The platform supports three user roles:
+
+- Administrator
+- Knowledge Owner
+- Employee
+
+Each role has different permissions for document management, administration, and knowledge retrieval.
+
+---
+
+# 🧪 Testing
+
+Run frontend tests
+
+```bash
+npm test
+```
+
+Run backend tests
+
+```bash
+pytest
+```
+
+The project includes:
+
+- Functional Tests
+- Ingestion Tests
+- Retrieval Tests
+- AI Output Tests
+- Access Control Tests
+
+---
+
+# 🚀 Deployment
+
+### Frontend
+
+Deploy using:
 
 - Vercel
 
-Backend
+### Backend
+
+Deploy using:
 
 - Render
 
-Database
+### Database
 
 - Supabase PostgreSQL
 
-Vector Database
+### Vector Store
 
 - ChromaDB
 
 ---
 
-# Future Enhancements
+# 📈 Future Enhancements
 
-- SharePoint Connector
-- Jira Connector
-- Confluence Connector
+- SharePoint Integration
+- Jira Integration
+- Confluence Integration
 - GitHub Connector
 - Hybrid Search
-- Semantic Caching
-- OCR Support
-- Voice Assistant
-- Streaming Responses
+- OCR for Scanned Documents
+- Voice-based Queries
+- Streaming AI Responses
 - Multi-language Support
 
 ---
 
-# Contributors
+# 🤝 Contributing
 
-Team Members
+1. Fork the repository
 
-- Product
-- Frontend
-- Backend
-- AI/ML
-- Database
-- Testing
-- Documentation
+2. Create your feature branch
+
+```bash
+git checkout -b feature/feature-name
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Add new feature"
+```
+
+4. Push to GitHub
+
+```bash
+git push origin feature/feature-name
+```
+
+5. Open a Pull Request
 
 ---
 
-# License
+# 📄 License
 
-This project is developed for the Infosys Enterprise GPT Hackathon/Capstone Project and is intended for educational and demonstration purposes.
+This project was developed as part of the **Infosys Enterprise GPT Capstone/Hackathon Project** for educational and demonstration purposes.
+
+---
+
+# 👥 Team
+
+- Product Engineering
+- Frontend Development
+- Backend Development
+- AI/ML Engineering
+- Database Engineering
+- QA & Testing
+- Documentation
