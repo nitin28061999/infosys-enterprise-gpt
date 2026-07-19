@@ -1,7 +1,7 @@
 ﻿export default function Footer() {
   return (
-    <footer className="border-t bg-slate-100 py-5 text-center text-sm text-slate-600">
-      © 2025 Infosys AI Knowledge Assistant | Enterprise GPT
+    <footer className="bg-slate-100 p-4 text-center">
+      © 2025 Infosys AI Knowledge Assistant
     </footer>
   );
 }
