@@ -10,5 +10,6 @@
         "uvicorn",
         "venv",
         "XVCJ"
-    ]
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

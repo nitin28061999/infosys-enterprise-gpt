@@ -9,6 +9,18 @@ class Role(str, enum):
     KNOWLEDGE_OWNER = "KNOWLEDGE_OWNER"
     EMPLOYEE = "EMPLOYEE"
 
+class Department(str, enum):
+    HR = "HR"
+    ENGINEERING = "ENGINEERING"
+    FINANCE = "FINANCE"
+    SALES = "SALES"
+    MARKETING = "MARKETING"
+    LEGAL = "LEGAL"
+    OPERATIONS = "OPERATIONS"
+    IT = "IT"
+    PROCUREMENT = "PROCUREMENT"
+
+
 class User(Base):
     __tablename__= "users"
 
@@ -17,5 +29,6 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(Enum(Role), default=Role.EMPLOYEE, nullable=False)
+    department: Mapped[Department] = mapped_column(Enum(Department), nullable=False)
 
 

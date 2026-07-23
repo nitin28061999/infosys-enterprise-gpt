@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Form, File, UploadFile, Depends, status
 from .document_schema import DocumentRequest, ListResponse , ApiResponse, UpdateDocument
 from .document_service import DocumentService
+from utils.rbac_util import admin_only, knowledge_owner_only
 
-router = APIRouter(prefix='/document', tags=['Documents'])
+router = APIRouter(prefix='/document', tags=['Documents'], dependencies=[Depends(knowledge_owner_only)])
 
 
 @router.post('/', status_code=201, response_model=ApiResponse)
@@ -37,7 +38,7 @@ def update(id:int, payload: UpdateDocument, service:DocumentService = Depends())
     return {"success": True, "message": "Document Updated successfully", "data": document}
 
 
-@router.delete('/{id}', status_code=200, response_model=ApiResponse)
+@router.delete('/{id}', status_code=200, response_model=ApiResponse, dependencies=[Depends(admin_only)])
 def delete(id:int, service: DocumentService = Depends()):
     result = service.delete_document(id)
 

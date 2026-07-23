@@ -4,6 +4,8 @@ from fastapi import Depends, UploadFile, HTTPException
 from config.supabase_config import supabase_upload
 from .document_model import Document
 from .document_schema import UpdateDocument
+import supabase
+from config.env_config import envConfig
 
 
 class DocumentService:
@@ -22,6 +24,9 @@ class DocumentService:
 
         return document
 
+
+
+    
 
     def get_documents(self):
 
@@ -65,3 +70,35 @@ class DocumentService:
         self.db.commit()
 
         return
+
+
+    
+
+    def indexing(self, id):
+
+        document = (self.db.query(Document).filter(Document.id == id).first())
+
+        if not document:
+            raise Exception("Document not found")
+
+        file_bytes = (supabase.storage .from_(envConfig.SUPABASE_BUCKET).download(document.file_path))
+
+        # text = extract_pdf(file_bytes)
+
+        # chunks = chunk_text(text)
+
+        # embeddings = embedding_model.embed_documents(chunks)
+
+        # vector_db.add_documents(
+        #     chunks,
+        #     embeddings,
+        #     metadata={
+        #         "document_id": document.id,
+        #         "department": document.department,
+        #         "owner": document.owner,
+        #     }
+        # ) 
+
+
+    def ingestion_status():
+        pass 

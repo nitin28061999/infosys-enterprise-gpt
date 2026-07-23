@@ -26,7 +26,7 @@ class AuthService:
         hashed_password  = hashPassword(data.password)
 
         try:
-            user = User(name=data.name, email=data.email, password=hashed_password, role=role )
+            user = User(name=data.name, email=data.email, password=hashed_password, department=data.department, role=role )
             self.db.add(user)
             self.db.commit()
             self.db.refresh(user)
@@ -69,3 +69,7 @@ class AuthService:
         token = create_access_token({"id": user.id, "role": user.role})
         
         return token
+
+
+    def logout(self):
+        pass

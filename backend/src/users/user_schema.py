@@ -22,4 +22,7 @@ class ApiResponse(BaseModel):
     message: str
     data: UserResponse
 
+class ApiGetResponse(ApiResponse):
+    data: list[UserResponse]
+
 
