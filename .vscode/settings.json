@@ -6,6 +6,7 @@
         "Pageheader",
         "pytest",
         "Rolecard",
+        "settingspage",
         "Supabase",
         "uvicorn",
         "venv",
