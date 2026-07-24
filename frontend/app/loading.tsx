@@ -5,14 +5,14 @@
 
         <div className="flex flex-col items-center">
 
-          <div className="mb-6 h-16 w-16 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+          <div className="h-16 w-16 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
 
-          <h2 className="text-2xl font-bold text-slate-800">
-            Uploading Document...
+          <h2 className="mt-6 text-2xl font-bold text-slate-800">
+            Loading...
           </h2>
 
-          <p className="mt-3 text-center text-slate-500">
-            Please wait while your file is being uploaded.
+          <p className="mt-2 text-center text-gray-500">
+            Please wait while we prepare your workspace.
           </p>
 
         </div>
