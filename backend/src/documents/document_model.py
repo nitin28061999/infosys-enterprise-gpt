@@ -7,8 +7,12 @@ from datetime import datetime
 
 
 class DocumentStatus(str, Enum):
-     ACTIVE = "ACTIVE"
-     INACTIVE = "INACTIVE"
+    UPLOADED = "UPLOADED"
+    INDEXING = "INDEXING"
+    ACTIVE = "ACTIVE"
+    FAILED = "FAILED"
+    INACTIVE = "INACTIVE"
+    ARCHIVED = "ARCHIVED"
 
 class Document(Base):
     __tablename__ = "documents"
@@ -17,7 +21,7 @@ class Document(Base):
     department : Mapped[str] = mapped_column(String(255))
     owner : Mapped[str] = mapped_column(String(255))
     file_path : Mapped[str] = mapped_column(String(500))
-    status: Mapped[DocumentStatus] = mapped_column(sqlEnum(DocumentStatus), default=DocumentStatus.ACTIVE, nullable=False)
+    status: Mapped[DocumentStatus] = mapped_column(sqlEnum(DocumentStatus), default=DocumentStatus.UPLOADED, nullable=False)
     uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 

@@ -83,6 +83,8 @@ class DocumentService:
 
         file_bytes = (supabase.storage .from_(envConfig.SUPABASE_BUCKET).download(document.file_path))
 
+        # Background Indexing (Extract → Chunk → Embed)
+    
         # text = extract_pdf(file_bytes)
 
         # chunks = chunk_text(text)
