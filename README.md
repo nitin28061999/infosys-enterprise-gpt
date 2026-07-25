@@ -279,7 +279,7 @@ backend/.env
 ```env
 # Gemini
 
-GEMINI_API_KEY= AQ.Ab8RN6IJFaPYN7CVfRtrmwXCRNx0fjN7RrMBh0T6tIZwGs_k1Q
+GEMINI_API_KEY= AQ.Ab8RN6IQnaDRtaWGUPk8VUYuClxOzfisfWAmz-v8j__mTPyfYA
 
 # Supabase
 
@@ -457,19 +457,19 @@ pytest
 git checkout -b feature/my-feature
 ```
 
-3. Commit changes
+1. Commit changes
 
 ```bash
 git commit -m "Add new feature"
 ```
 
-4. Push changes
+1. Push changes
 
 ```bash
 git push origin feature/my-feature
 ```
 
-5. Open a Pull Request
+1. Open a Pull Request
 
 ---
 
