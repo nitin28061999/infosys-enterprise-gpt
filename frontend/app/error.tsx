@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -11,6 +12,8 @@ export default function UploadError({
   error,
   reset,
 }: ErrorProps) {
+  const router = useRouter();
+
   useEffect(() => {
     console.error("Upload Error:", error);
   }, [error]);
@@ -51,7 +54,7 @@ export default function UploadError({
           </button>
 
           <button
-            onClick={() => (window.location.href = "/upload")}
+            onClick={() => router.push("/upload")}
             className="rounded-lg border border-slate-300 px-6 py-3 font-medium transition hover:bg-slate-100"
           >
             Back to Upload

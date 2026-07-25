@@ -1,59 +1,201 @@
 ﻿# 🚀 Infosys AI Knowledge Assistant – Enterprise GPT
 
-An enterprise-grade AI-powered Knowledge Assistant that enables Infosys employees to securely search, retrieve, and interact with internal organizational knowledge using Retrieval-Augmented Generation (RAG), Google Gemini, and Model Context Protocol (MCP).
+An enterprise-grade AI-powered Knowledge Assistant that enables Infosys employees to securely search, retrieve, and interact with organizational knowledge using **Retrieval-Augmented Generation (RAG)**, **Google Gemini**, **Supabase**, and **Model Context Protocol (MCP)**.
 
-The platform transforms enterprise documents such as SOPs, HR policies, project manuals, engineering guides, and sales assets into a searchable knowledge base, providing fast, reliable, and citation-backed answers while enforcing role-based access control.
+The platform transforms enterprise documents such as SOPs, HR policies, engineering manuals, project documentation, and knowledge bases into an intelligent conversational assistant with citation-backed responses and role-based access control.
 
 ---
 
-# 🛠️ Tech Stack
+# 📑 Table of Contents
 
-### Frontend
-- Next.js 15
-- React
+- Features
+- Tech Stack
+- Project Architecture
+- Project Structure
+- Prerequisites
+- Installation
+- Environment Variables
+- Database Setup
+- Running the Application
+- API Documentation
+- Testing
+- Deployment
+- Roadmap
+- Contributing
+- License
+
+---
+
+# ✨ Features
+
+## 🤖 Enterprise AI Assistant
+
+- Natural language enterprise search
+- Multi-turn conversations
+- Citation-backed answers
+- Confidence scores
+- Source previews
+- Conversation history
+
+## 📚 Knowledge Management
+
+- Upload PDF, DOCX and TXT files
+- Automatic document parsing
+- Metadata tagging
+- Department assignment
+- Version management
+
+## 🧠 Retrieval-Augmented Generation (RAG)
+
+- Semantic search
+- Vector embeddings
+- Context retrieval
+- Grounded AI responses
+- Citation generation
+
+## 🔐 Enterprise Security
+
+- JWT Authentication
+- Role-Based Access Control (RBAC)
+- Department-level permissions
+- Secure API keys
+- Audit logging
+
+## 📊 Analytics
+
+- Query analytics
+- User activity
+- Failed search tracking
+- Retrieval quality metrics
+- Feedback dashboard
+
+## 🔌 MCP Connectors
+
+- File System
+- SharePoint *(Planned)*
+- Jira *(Planned)*
+- GitHub *(Planned)*
+- Confluence *(Planned)*
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- Next.js 16
+- React 19
 - TypeScript
 - Tailwind CSS
 - ShadCN UI
 
-### Backend
+## Backend
+
 - FastAPI
-- Python
+- Python 3.11+
 - SQLAlchemy
 - JWT Authentication
 
-### AI & RAG
+## AI
+
 - Google Gemini
 - LangChain
 - LangGraph
+
+## Vector Database
+
 - ChromaDB
 
-### Database
+## Database
+
 - Supabase PostgreSQL
 
-### Document Processing
+## Document Processing
+
 - PyPDF
 - python-docx
 - Unstructured
 
-### Deployment
+## Deployment
+
 - Vercel
 - Render
 
 ---
 
-# ⚡ Quick Start
+# 🏗 Project Architecture
 
-## 1. Clone the Repository
+```
+                Frontend (Next.js)
+                        │
+                        ▼
+                 FastAPI Backend
+                        │
+      ┌─────────────────┼─────────────────┐
+      ▼                 ▼                 ▼
+ Supabase DB      Google Gemini      ChromaDB
+      │                                  │
+      └──────────────RAG Pipeline────────┘
+```
+
+---
+
+# 📂 Project Structure
+
+```text
+infosys-ai-knowledge-assistant-enterprise-gpt/
+
+├── frontend/
+│   ├── app/
+│   ├── component/
+│   ├── lib/
+│   ├── public/
+│   └── package.json
+│
+├── backend/
+│   ├── api/
+│   ├── auth/
+│   ├── services/
+│   ├── connectors/
+│   ├── database/
+│   ├── audit/
+│   ├── main.py
+│   ├── config.py
+│   └── requirements.txt
+│
+├── docs/
+├── tests/
+├── deployment/
+└── README.md
+```
+
+---
+
+# 📋 Prerequisites
+
+Install:
+
+- Node.js 20+
+- Python 3.11+
+- Git
+- Supabase Account
+- Google AI Studio Account
+
+---
+
+# ⚡ Installation
+
+## 1. Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/infosys-ai-knowledge-assistant-enterprise-gpt.git
+git clone https://github.com/nitin28061999/infosys-enterprise-gpt
 
 cd infosys-ai-knowledge-assistant-enterprise-gpt
 ```
 
 ---
 
-## 2. Install Frontend Dependencies
+## 2. Frontend Setup
 
 ```bash
 cd frontend
@@ -63,7 +205,7 @@ npm install
 
 ---
 
-## 3. Install Backend Dependencies
+## 3. Backend Setup
 
 ```bash
 cd ../backend
@@ -91,103 +233,143 @@ pip install -r requirements.txt
 
 ---
 
-# ☁️ Set Up Supabase
+# ☁️ Supabase Setup
 
-1. Go to the **Supabase Dashboard**
-2. Create a new project
-3. Wait until provisioning finishes
-4. Open
+Create a new project from the Supabase Dashboard.
 
-```
-Settings
-    ├── API
-    └── Database
-```
-
-Copy the following values:
+Collect the following values:
 
 - Project URL
+- Project Reference
+- Database Password
 - Anon Key
 - Service Role Key
 - Database Connection String
 
 ---
 
-# 🔑 Configure Environment Variables
+# 🔑 Environment Variables
 
-Create a `.env` file inside the **backend** folder.
+## Frontend
+
+Create
+
+```
+frontend/.env.local
+```
+
+```env
+NEXT_PUBLIC_SUPABASE_URL= https://supabase.com/dashboard/project/hgpwqlzbmpbesbmrpaoo
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncHdxbHpibXBiZXNibXJwYW9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzNjk1ODAsImV4cCI6MjA5OTk0NTU4MH0.iEdP7Db9sxIGKFcl3c3jvlD0-VXRqd_QnpNgsdCD4DA
+
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+---
+
+## Backend
+
+Create
+
+```
+backend/.env
+```
 
 ```env
 # Gemini
-GEMINI_API_KEY=your_gemini_api_key
+
+GEMINI_API_KEY= AQ.Ab8RN6IJFaPYN7CVfRtrmwXCRNx0fjN7RrMBh0T6tIZwGs_k1Q
 
 # Supabase
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres
 
-SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+DATABASE_URL=postgresql://postgres:Edgpt@2026@db.hgpwqlzbmpbesbmrpaoo.supabase.co:5432/postgres
 
-SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_URL=https://hgpwqlzbmpbesbmrpaoo.supabase.co
 
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+SUPABASE_ANON_KEY= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncHdxbHpibXBiZXNibXJwYW9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzNjk1ODAsImV4cCI6MjA5OTk0NTU4MH0.iEdP7Db9sxIGKFcl3c3jvlD0-VXRqd_QnpNgsdCD4DA
 
-# Vector Database
+SUPABASE_SERVICE_ROLE_KEY= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncHdxbHpibXBiZXNibXJwYW9vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NDM2OTU4MCwiZXhwIjoyMDk5OTQ1NTgwfQ.xT0vtblwpIVREuWAuGaciRpLAawJ0scP1KzkIrLjc4Y
+
+# Chroma
+
 CHROMA_DB_PATH=./vector_store
 
-# Authentication
-JWT_SECRET_KEY=your_secret_key
+# JWT
+
+JWT_SECRET_KEY= dc6d956e-8e75-4b18-abfe-82035d2da9ca
 
 JWT_ALGORITHM=HS256
 
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 
 # Uploads
+
 UPLOAD_DIRECTORY=uploads
+```
+
+Create directories
+
+```bash
+mkdir uploads
+
+mkdir vector_store
 ```
 
 ---
 
-# 🗄️ Database Setup
+# 🗄 Database Setup
 
-Create a new SQL script inside the Supabase SQL Editor.
+Open the Supabase SQL Editor.
 
-The application will create tables for:
+Run the migration scripts located in
+
+```
+backend/database/migrations
+```
+
+This creates:
 
 - Users
 - Documents
 - Metadata
 - Departments
-- Feedback
 - Audit Logs
 - Query History
+- Feedback
 - Knowledge Sources
-
-Run the SQL migration before starting the application.
 
 ---
 
-# ▶️ Run the Backend
+# ▶ Running the Backend
 
 ```bash
 cd backend
 
-uvicorn app.main:app --reload
+uvicorn main:app --reload
 ```
 
-Backend will start at
+Backend
 
 ```
 http://localhost:8000
 ```
 
-Swagger Documentation
+Swagger
 
 ```
 http://localhost:8000/docs
 ```
 
+ReDoc
+
+```
+http://localhost:8000/redoc
+```
+
 ---
 
-# ▶️ Run the Frontend
+# ▶ Running the Frontend
 
 ```bash
 cd frontend
@@ -195,7 +377,7 @@ cd frontend
 npm run dev
 ```
 
-Frontend will start at
+Frontend
 
 ```
 http://localhost:3000
@@ -203,155 +385,64 @@ http://localhost:3000
 
 ---
 
-# ✨ Features
+# 🔐 User Roles
 
-## Enterprise AI Assistant
-
-- Natural language search
-- Context-aware conversations
-- Citation-backed answers
-- Source previews
-- Confidence scores
-
----
-
-## Knowledge Management
-
-- Upload PDF, DOCX, TXT
-- Automatic document parsing
-- Metadata tagging
-- Department assignment
-- Version management
-
----
-
-## Retrieval-Augmented Generation (RAG)
-
-- Semantic document search
-- Vector embeddings
-- Context retrieval
-- Grounded AI responses
-- Citation generation
-
----
-
-## MCP Connectors
-
-- File System
-- SharePoint (Planned)
-- Jira (Planned)
-- GitHub (Planned)
-- Confluence (Planned)
-
----
-
-## Security
-
-- JWT Authentication
-- Role-Based Access Control (RBAC)
-- Department-level permissions
-- Secure API keys
-- Audit logging
-
----
-
-## Analytics
-
-- Query analytics
-- Citation coverage
-- Retrieval quality
-- Failed search tracking
-- Feedback dashboard
-
----
-
-# 📂 Project Structure
-
-```
-infosys-ai-knowledge-assistant-enterprise-gpt/
-
-├── frontend/
-├── backend/
-├── ingestion_pipeline/
-├── ai_workflows/
-├── data/
-├── docs/
-├── tests/
-└── deployment/
-```
-
----
-
-# 🔐 Authentication
-
-The platform supports three user roles:
-
-- Administrator
-- Knowledge Owner
-- Employee
-
-Each role has different permissions for document management, administration, and knowledge retrieval.
+| Role | Permissions |
+|------|-------------|
+| Administrator | Full System Access |
+| Knowledge Owner | Manage Documents |
+| Employee | Search & Chat |
 
 ---
 
 # 🧪 Testing
 
-Run frontend tests
+## Frontend
 
 ```bash
-npm test
+npm run lint
 ```
 
-Run backend tests
+*(Add `npm test` after configuring a test framework.)*
+
+## Backend
 
 ```bash
 pytest
 ```
 
-The project includes:
-
-- Functional Tests
-- Ingestion Tests
-- Retrieval Tests
-- AI Output Tests
-- Access Control Tests
-
 ---
 
 # 🚀 Deployment
 
-### Frontend
-
-Deploy using:
+## Frontend
 
 - Vercel
 
-### Backend
-
-Deploy using:
+## Backend
 
 - Render
 
-### Database
+## Database
 
 - Supabase PostgreSQL
 
-### Vector Store
+## Vector Database
 
 - ChromaDB
 
 ---
 
-# 📈 Future Enhancements
+# 📈 Roadmap
 
-- SharePoint Integration
-- Jira Integration
-- Confluence Integration
+- SharePoint Connector
+- Jira Connector
 - GitHub Connector
+- Confluence Connector
+- OCR Support
 - Hybrid Search
-- OCR for Scanned Documents
-- Voice-based Queries
-- Streaming AI Responses
+- Streaming Responses
+- Voice Search
 - Multi-language Support
 
 ---
@@ -360,22 +451,22 @@ Deploy using:
 
 1. Fork the repository
 
-2. Create your feature branch
+2. Create a branch
 
 ```bash
-git checkout -b feature/feature-name
+git checkout -b feature/my-feature
 ```
 
-3. Commit your changes
+3. Commit changes
 
 ```bash
 git commit -m "Add new feature"
 ```
 
-4. Push to GitHub
+4. Push changes
 
 ```bash
-git push origin feature/feature-name
+git push origin feature/my-feature
 ```
 
 5. Open a Pull Request
@@ -388,7 +479,7 @@ This project was developed as part of the **Infosys Enterprise GPT Capstone/Hack
 
 ---
 
-# 👥 Team
+# 👨‍💻 Team
 
 - Product Engineering
 - Frontend Development
@@ -397,3 +488,7 @@ This project was developed as part of the **Infosys Enterprise GPT Capstone/Hack
 - Database Engineering
 - QA & Testing
 - Documentation
+
+---
+
+⭐ If you found this project useful, consider giving it a star on GitHub.
