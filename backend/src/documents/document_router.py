@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Form, File, UploadFile, Depends, status
-from .document_schema import DocumentRequest, ListResponse , ApiResponse, UpdateDocument
+from .document_schema import DocumentRequest, ListResponse , ApiResponse, UpdateDocument, IngestionResponse
 from .document_service import DocumentService
 from utils.rbac_util import admin_only, knowledge_owner_only
 
@@ -43,3 +43,28 @@ def delete(id:int, service: DocumentService = Depends()):
     result = service.delete_document(id)
 
     return {"success": True, "message": "Document deleted successfully.", "data": None}
+
+
+@router.post('/indexing/{id}', status_code=202, response_model=ApiResponse)
+def document_indexing(id: int, service: DocumentService = Depends()):
+
+    mssg = service.indexing(id)
+
+    return {
+        "sucess": True,
+        "message": mssg.message,
+        "data": None
+    }
+
+@router.get("/ingestion-status/{document_id}", status_code=200, response_model=IngestionResponse)
+def ingestion_status(document_id: int, service: DocumentService = Depends()):
+    status = service.ingestion_status(document_id)
+
+    return {
+        "success": True,
+        "message": "Status fetched successfully",
+        "data": {
+            "document_id": id,
+            "status": status
+        }
+    }

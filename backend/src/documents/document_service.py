@@ -4,8 +4,9 @@ from fastapi import Depends, UploadFile, HTTPException
 from config.supabase_config import supabase_upload
 from .document_model import Document
 from .document_schema import UpdateDocument
-import supabase
 from config.env_config import envConfig
+from utils.background_job import index_document
+
 
 
 class DocumentService:
@@ -79,28 +80,31 @@ class DocumentService:
         document = (self.db.query(Document).filter(Document.id == id).first())
 
         if not document:
-            raise Exception("Document not found")
+            raise HTTPException(status_code=404, detail="Document not found")
 
-        file_bytes = (supabase.storage .from_(envConfig.SUPABASE_BUCKET).download(document.file_path))
+        
+        try:
 
-        # Background Indexing (Extract → Chunk → Embed)
-    
-        # text = extract_pdf(file_bytes)
+            document.status = "QUEUED"
+            self.db.commit()
 
-        # chunks = chunk_text(text)
+            # Publish job
+            index_document.delay(id)
 
-        # embeddings = embedding_model.embed_documents(chunks)
+            return { "message": "Indexing job queued successfully" }
 
-        # vector_db.add_documents(
-        #     chunks,
-        #     embeddings,
-        #     metadata={
-        #         "document_id": document.id,
-        #         "department": document.department,
-        #         "owner": document.owner,
-        #     }
-        # ) 
+        except Exception as e: 
+            print(e)
+            document.status ="FAILED"
+            self.db.commit()
+            raise
 
 
-    def ingestion_status():
-        pass 
+    def ingestion_status(self, document_id: int):
+
+        document = self.db.query(Document).filter(Document.id == document_id).first()
+
+        if not document:
+            raise HTTPException(status_code=404, detail="Document not found")
+
+        return document.status

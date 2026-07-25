@@ -8,11 +8,10 @@ from datetime import datetime
 
 class DocumentStatus(str, Enum):
     UPLOADED = "UPLOADED"
-    INDEXING = "INDEXING"
-    ACTIVE = "ACTIVE"
+    QUEUED = "QUEUED"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
     FAILED = "FAILED"
-    INACTIVE = "INACTIVE"
-    ARCHIVED = "ARCHIVED"
 
 class Document(Base):
     __tablename__ = "documents"

@@ -37,3 +37,11 @@ class UpdateDocument(BaseModel):
     status: DocumentStatus | None = None 
 
 
+class IngestionData(BaseModel):
+    document_id: int
+    status: str
+    
+class IngestionResponse(BaseModel):
+    success: bool 
+    message: str 
+    data: IngestionData
