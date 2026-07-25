@@ -6,6 +6,10 @@ from .document_model import Document
 from .document_schema import UpdateDocument
 from config.env_config import envConfig
 from utils.background_job import index_document
+from .document_model import DocumentStatus
+from config.arq_config import ArqService
+
+
 
 
 
@@ -13,12 +17,13 @@ class DocumentService:
 
     def __init__(self, db: Session=Depends(get_db)):
         self.db = db
+        self.arq_service = ArqService()
 
     async def upload_file(self, title:str, department:str, owner:str, file: UploadFile):
         
         file_path = await supabase_upload(file)
 
-        document = Document(title=title, department=department, owner=owner, file_path=file_path, status="ACTIVE")
+        document = Document(title=title, department=department, owner=owner, file_path=file_path)
         self.db.add(document)
         self.db.commit()
         self.db.refresh(document)
@@ -75,27 +80,29 @@ class DocumentService:
 
     
 
-    def indexing(self, id):
+    async def indexing(self, id):
 
         document = (self.db.query(Document).filter(Document.id == id).first())
 
         if not document:
             raise HTTPException(status_code=404, detail="Document not found")
 
+        if document.status in [DocumentStatus.QUEUED, DocumentStatus.PROCESSING]:
+            raise HTTPException(status_code=409, detail=f"Document is already {document.status.lower()}.")
         
         try:
 
-            document.status = "QUEUED"
+            document.status = DocumentStatus.QUEUED
             self.db.commit()
 
             # Publish job
-            index_document.delay(id)
+            await self.arq_service.enqueue_index_job(document.id)
 
             return { "message": "Indexing job queued successfully" }
 
         except Exception as e: 
             print(e)
-            document.status ="FAILED"
+            document.status = DocumentStatus.FAILED
             self.db.commit()
             raise
 

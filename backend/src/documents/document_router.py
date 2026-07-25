@@ -46,13 +46,13 @@ def delete(id:int, service: DocumentService = Depends()):
 
 
 @router.post('/indexing/{id}', status_code=202, response_model=ApiResponse)
-def document_indexing(id: int, service: DocumentService = Depends()):
+async def document_indexing(id: int, service: DocumentService = Depends()):
 
-    mssg = service.indexing(id)
+    mssg = await service.indexing(id)
 
     return {
-        "sucess": True,
-        "message": mssg.message,
+        "success": True,
+        "message": mssg['message'],
         "data": None
     }
 
@@ -64,7 +64,7 @@ def ingestion_status(document_id: int, service: DocumentService = Depends()):
         "success": True,
         "message": "Status fetched successfully",
         "data": {
-            "document_id": id,
+            "document_id": document_id,
             "status": status
         }
     }

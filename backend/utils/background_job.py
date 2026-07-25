@@ -1,9 +1,7 @@
-
-from config.celery_config import celery_app
 from config.supabase_config import supabase
 from config.env_config import envConfig
 from config.db_config import SessionLocal
-from src.documents.document_model import Document
+from src.documents.document_model import Document, DocumentStatus
 import logging
 
 logger = logging.getLogger(__name__)
@@ -11,8 +9,8 @@ logger = logging.getLogger(__name__)
   
 
 
-@celery_app.task
-def index_document( id: int):
+async def index_document(ctx, id: int):
+
 
     db = SessionLocal()
 
@@ -23,7 +21,7 @@ def index_document( id: int):
 
     try:
 
-        document.status = "PROCESSING"
+        document.status = DocumentStatus.PROCESSING
         db.commit()
 
         file_bytes = (supabase.storage .from_(envConfig.SUPABASE_BUCKET).download(document.file_path))
@@ -31,12 +29,12 @@ def index_document( id: int):
             
         # Background Indexing (Extract → Chunk → Embed)
         
-        document.status = "COMPLETED"
+        document.status = DocumentStatus.COMPLETED
         db.commit()
             
     except Exception as e:
         logger.exception("Document indexing failed")
-        document.status = "FAILED"
+        document.status = DocumentStatus.FAILED
         db.commit()
         raise
 
