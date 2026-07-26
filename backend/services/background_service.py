@@ -3,10 +3,27 @@ from config.env_config import envConfig
 from config.db_config import SessionLocal
 from src.documents.document_model import Document, DocumentStatus
 import logging
+from services.indexing_service import create_texts, create_chunks, EmbeddingService, VectorService
 
 logger = logging.getLogger(__name__)
 
   
+
+
+class IndexingService:
+
+     def __init__(self):
+        self.embedding_service = EmbeddingService()
+        self.vector_service = VectorService()
+
+     def indexingDoc(self, document, file_bytes):
+         texts = create_texts(file_bytes)
+         chunks = create_chunks(texts)
+         embeddings = self.embedding_service.create_embedding(chunks)
+         self.vector_service.store_vectorDb(document.id, chunks, embeddings)
+    
+
+indexingService = IndexingService()
 
 
 async def index_document(ctx, id: int):
@@ -28,6 +45,8 @@ async def index_document(ctx, id: int):
     
             
         # Background Indexing (Extract → Chunk → Embed)
+        indexingService.indexingDoc(document, file_bytes)
+        
         
         document.status = DocumentStatus.COMPLETED
         db.commit()
@@ -40,3 +59,6 @@ async def index_document(ctx, id: int):
 
     finally:
         db.close()
+
+
+    

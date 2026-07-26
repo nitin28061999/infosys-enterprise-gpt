@@ -5,7 +5,7 @@ from config.supabase_config import supabase_upload
 from .document_model import Document
 from .document_schema import UpdateDocument
 from config.env_config import envConfig
-from utils.background_job import index_document
+from services.background_service import index_document
 from .document_model import DocumentStatus
 from config.arq_config import ArqService
 

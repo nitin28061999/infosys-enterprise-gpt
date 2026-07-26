@@ -1,7 +1,7 @@
 from arq.connections import RedisSettings
 from config.env_config import envConfig
 from arq import create_pool
-from utils.background_job import index_document
+from services.background_service import index_document
 
 redis_settings = RedisSettings(
     host=envConfig.REDIS_HOST,

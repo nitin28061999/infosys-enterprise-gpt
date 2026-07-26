@@ -17,6 +17,9 @@ services:
     env_file:
       - .env
 
+    volumes:
+      - chroma_data:/app/chroma_db
+
     depends_on:
       - redis
 
@@ -33,6 +36,9 @@ services:
     env_file:
       - .env
 
+    volumes:
+      - chroma_data:/app/chroma_db
+
     depends_on:
       - redis
 
@@ -47,3 +53,6 @@ services:
       - "6379:6379"
 
     restart: unless-stopped
+
+volumes:
+  chroma_data:
