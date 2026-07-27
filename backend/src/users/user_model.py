@@ -1,8 +1,16 @@
 from enum import Enum as enum
 from sqlalchemy import Column, String, Integer, Enum 
-from sqlalchemy.orm import Mapped, mapped_column 
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from config.db_config import Base 
+from typing import TYPE_CHECKING
 
+
+if TYPE_CHECKING:
+    from src.audit.audit_model import Audit
+    from src.feedback.feedback_model import Feedback
+
+
+    
 
 class Role(str, enum):
     ADMIN = "ADMIN"
@@ -30,5 +38,9 @@ class User(Base):
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(Enum(Role), default=Role.EMPLOYEE, nullable=False)
     department: Mapped[Department] = mapped_column(Enum(Department), nullable=False)
+
+    # relationship 
+    audit_logs: Mapped[list["Audit"]] = relationship("Audit", back_populates="users")
+    feedback: Mapped[list['Feedback']] = relationship("Feedback", back_populates="users")
 
 
