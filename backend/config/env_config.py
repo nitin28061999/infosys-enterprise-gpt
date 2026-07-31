@@ -20,6 +20,10 @@ class EnvConfig(BaseSettings):
     # background job
     REDIS_HOST: str 
     REDIS_PORT : int 
+    REDIS_LOCAL_HOST: str
+
+    # llm 
+    GEMINI_API_KEY: str
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

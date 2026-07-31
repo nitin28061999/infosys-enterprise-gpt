@@ -40,7 +40,7 @@ class User(Base):
     department: Mapped[Department] = mapped_column(Enum(Department), nullable=False)
 
     # relationship 
-    audit_logs: Mapped[list["Audit"]] = relationship("Audit", back_populates="users")
-    feedback: Mapped[list['Feedback']] = relationship("Feedback", back_populates="users")
+    audit_logs: Mapped[list["Audit"]] = relationship("Audit", back_populates="user")
+    feedback: Mapped[list['Feedback']] = relationship("Feedback", back_populates="user")
 
 

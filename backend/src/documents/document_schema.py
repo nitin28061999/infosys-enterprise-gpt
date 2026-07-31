@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict 
-from .document_model import DocumentStatus
+from .document_model import DocumentStatus, DocumentType, Confidentiality, AccessScope
 from datetime import datetime
-
+from fastapi import Form
 
 
 
@@ -9,6 +9,31 @@ class DocumentRequest(BaseModel):
     title: str 
     department: str 
     owner: str 
+    document_type: DocumentType
+    confidentiality: Confidentiality
+    access_scope: AccessScope
+    source_system: bool | None = None
+
+    @classmethod
+    def as_form(
+        cls,
+        title: str = Form(...),
+        department: str = Form(...),
+        owner: str = Form(...),
+        document_type: DocumentType = Form(...),
+        confidentiality: Confidentiality = Form(...),
+        access_scope: AccessScope = Form(...),
+        source_system: bool | None = Form(None),
+    ) -> "DocumentRequest":
+        return cls(
+            title=title,
+            department=department,
+            owner=owner,
+            document_type=document_type,
+            confidentiality=confidentiality,
+            access_scope=access_scope,
+            source_system=source_system,
+        )
 
 
 class DocumentData(DocumentRequest):
@@ -16,6 +41,7 @@ class DocumentData(DocumentRequest):
     file_path: str
     status: DocumentStatus
     uploaded_at: datetime
+    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -34,8 +60,33 @@ class UpdateDocument(BaseModel):
     title : str | None = None 
     department: str | None = None 
     owner: str | None = None 
-    status: DocumentStatus | None = None 
+    document_type: DocumentType | None = None
+    confidentiality: Confidentiality | None = None
+    access_scope: AccessScope | None = None
+    source_system: bool | None = None
 
+    @classmethod
+    def as_form(
+        cls,
+        title: str | None = Form(None),
+        department: str | None = Form(None),
+        owner: str | None = Form(None),
+        document_type: DocumentType | None = Form(None),
+        confidentiality: Confidentiality | None = Form(None),
+        access_scope: AccessScope | None = Form(None),
+        source_system: bool | None = Form(None),
+    ):
+        return cls(
+            title=title,
+            department=department,
+            owner=owner,
+            document_type=document_type,
+            confidentiality=confidentiality,
+            access_scope=access_scope,
+            source_system=source_system,
+        )
+
+    
 
 class IngestionData(BaseModel):
     document_id: int

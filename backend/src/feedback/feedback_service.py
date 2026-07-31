@@ -13,10 +13,10 @@ class FeedbackService:
         self.db = db
 
 
-    def save_feedback(self, data: FeedbackRequest):
+    def save_feedback(self, data: FeedbackRequest, curr_user):
 
         try:
-            feed = Feedback(**data.model_dump())
+            feed = Feedback(**data.model_dump(), user_id=curr_user["id"])
 
             self.db.add(feed)
             self.db.commit()

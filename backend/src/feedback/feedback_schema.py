@@ -7,7 +7,6 @@ from .feedback_model import RatingEnum
     
 
 class FeedbackRequest(BaseModel):
-    user_id: int 
     audit_id: int | None = None 
     rating: RatingEnum 
     comment: str | None = None 

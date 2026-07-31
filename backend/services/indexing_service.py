@@ -12,17 +12,30 @@ def create_texts(filebyte):
 
     reader = PdfReader(BytesIO(filebyte))
     text = ""
+    pages = []
 
-    for page in reader.pages:
-        text += page.extract_text() + "\n"
+    for page_no, page in enumerate(reader.pages, start=1):
+        pages.append({
+            "page_number": page_no,
+            "text": page.extract_text() + "\n"
 
-    return text
+        })
+
+    return pages
 
 
-def create_chunks(text):
+def create_chunks(pages):
 
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    chunks = splitter.create_documents([text])
+
+    chunks = []
+
+    for page in pages:
+        docs = splitter.create_documents([page["text"]])
+        for doc in docs:
+            doc.metadata["page_number"] = page["page_number"]
+            chunks.append(doc)
+
     return chunks
 
 
@@ -53,7 +66,7 @@ class VectorService:
             self.collection = self.client.get_or_create_collection(name="documents")
 
 
-    def store_vectorDb(self, document_id, chunks, embeddings):    
+    def store_vectorDb(self, document_id, chunks, embeddings, title: str, department: str, owner: str, access_scope: str, confidentiality: str):    
 
         ids = []
         documents = []
@@ -64,11 +77,25 @@ class VectorService:
             documents.append(chunk.page_content)
             metadatas.append({
                 "document_id": document_id,
+                "document_name": title,
+                "department": department,
+                "owner": owner,
+                "access_scope": access_scope,
+                "confidentiality": confidentiality,
+                "page_number": chunk.metadata.get("page_number"),
                 "chunk_index": index,
+                # "section": chunk.metadata.get("section"),    # Optional (future use)
+                # "score": 0.0          # Filled during retrieval
             })
+
+
+        for key, value in metadatas[0].items():
+            print(key, value, type(value))
 
         self.collection.add(
                 ids=ids,
                 documents=documents,
                 embeddings=embeddings.tolist(),
                 metadatas=metadatas,)
+        print(self.collection.get(  ids=[ids[0]], include=["metadatas"])
+)

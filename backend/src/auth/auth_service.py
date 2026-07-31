@@ -66,7 +66,7 @@ class AuthService:
             raise HTTPException(status_code=400, detail="invalid password")
         
 
-        token = create_access_token({"id": user.id, "role": user.role})
+        token = create_access_token({"id": user.id, "role": user.role, "department": user.department})
         
         return token
 

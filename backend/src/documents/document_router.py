@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Form, File, UploadFile, Depends, status
+from fastapi import APIRouter, UploadFile, Depends, File
 from .document_schema import DocumentRequest, ListResponse , ApiResponse, UpdateDocument, IngestionResponse
 from .document_service import DocumentService
 from utils.rbac_util import admin_only, knowledge_owner_only
@@ -8,21 +8,25 @@ router = APIRouter(prefix='/document', tags=['Documents'], dependencies=[Depends
 
 @router.post('/', status_code=201, response_model=ApiResponse)
 async def upload(
-    title: str = Form(...),
-    department: str= Form(...),
-    owner: str = Form(...),
+    data: DocumentRequest = Depends(DocumentRequest.as_form),
     file: UploadFile = File(...),
     service: DocumentService = Depends()
     ):
 
-    document = await service.upload_file(title=title, department=department, owner=owner, file=file)
+    document = await service.upload_file(data, file)
     return {"success": True, "message": "File uploaded successfully", "data": document}
 
 
-@router.get('/all', status_code=200, response_model=ListResponse)
+@router.get('/', status_code=200, response_model=ListResponse)
 def get_all(service: DocumentService = Depends()):
     resp = service.get_documents()
     return {"success": True, "message": "Dcouments fetched successfully", "data": resp}
+
+
+@router.get('/vector-db', status_code=200)
+def vector_db(service: DocumentService = Depends()):
+    return service.get_chromaDB()
+
 
 @router.get('/{id}', status_code=200, response_model=ApiResponse)
 def get_one( id:int, service: DocumentService = Depends()):
@@ -32,8 +36,11 @@ def get_one( id:int, service: DocumentService = Depends()):
 
 
 @router.patch('/{id}', status_code=200, response_model=ApiResponse)
-def update(id:int, payload: UpdateDocument, service:DocumentService = Depends()):
-    document =  service.update_document(id, payload)
+async def update(id:int, 
+           payload: UpdateDocument = Depends(UpdateDocument.as_form),
+           file: UploadFile | None = File(None), 
+           service:DocumentService = Depends()):
+    document =  await service.update_document(id, payload, file)
 
     return {"success": True, "message": "Document Updated successfully", "data": document}
 
@@ -68,3 +75,5 @@ def ingestion_status(document_id: int, service: DocumentService = Depends()):
             "status": status
         }
     }
+
+

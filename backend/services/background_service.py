@@ -17,10 +17,10 @@ class IndexingService:
         self.vector_service = VectorService()
 
      def indexingDoc(self, document, file_bytes):
-         texts = create_texts(file_bytes)
-         chunks = create_chunks(texts)
+         pages = create_texts(file_bytes)
+         chunks = create_chunks(pages)
          embeddings = self.embedding_service.create_embedding(chunks)
-         self.vector_service.store_vectorDb(document.id, chunks, embeddings)
+         self.vector_service.store_vectorDb(document.id, chunks, embeddings, document.title, document.department, document.owner, document.access_scope, document.confidentiality)
     
 
 indexingService = IndexingService()
