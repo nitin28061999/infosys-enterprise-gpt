@@ -44,7 +44,7 @@ class QueryService:
         return prompt
         
 
-    def retrieveInfo(self, question: str, curr_user):
+    def retrieveInfo(self, question: str, curr_user, permission_context):
 
         start = time.perf_counter()
         try:
