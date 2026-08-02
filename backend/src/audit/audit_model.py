@@ -1,10 +1,13 @@
-from config.db_config import Base
+"""Audit models and enums."""
+from enum import Enum
+from datetime import datetime, UTC
+from typing import TYPE_CHECKING, Any
+
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Integer, Text, DateTime, ForeignKey, Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import JSONB
-from enum import Enum 
-from datetime import datetime, UTC
-from typing import TYPE_CHECKING, Any
+
+from config.db_config import Base
 
 
 if TYPE_CHECKING:

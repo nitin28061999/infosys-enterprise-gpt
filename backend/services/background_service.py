@@ -12,21 +12,30 @@ logger = logging.getLogger(__name__)
 
 class IndexingService:
 
-     def __init__(self):
+    def __init__(self):
         self.embedding_service = EmbeddingService()
         self.vector_service = VectorService()
 
-     def indexingDoc(self, document, file_bytes):
-         pages = create_texts(file_bytes)
-         chunks = create_chunks(pages)
-         embeddings = self.embedding_service.create_embedding(chunks)
-         self.vector_service.store_vectorDb(document.id, chunks, embeddings, document.title, document.department, document.owner, document.access_scope, document.confidentiality)
-    
+    def indexing_doc(self, document, file_bytes):
+        pages = create_texts(file_bytes)
+        chunks = create_chunks(pages)
+        embeddings = self.embedding_service.create_embedding(chunks)
+        self.vector_service.store_vector_db(
+           document.id,
+           chunks,
+           embeddings,
+           document.title,
+           document.department,
+           document.owner,
+           document.access_scope,
+           document.confidentiality,
+        )
 
-indexingService = IndexingService()
+
+indexing_service = IndexingService()
 
 
-async def index_document(ctx, id: int):
+async def index_document(_ctx, id: int):
 
 
     db = SessionLocal()
@@ -41,13 +50,12 @@ async def index_document(ctx, id: int):
         document.status = DocumentStatus.PROCESSING
         db.commit()
 
-        file_bytes = (supabase.storage .from_(envConfig.SUPABASE_BUCKET).download(document.file_path))
+        file_bytes = supabase.storage.from_(envConfig.SUPABASE_BUCKET).download(document.file_path)
     
             
         # Background Indexing (Extract → Chunk → Embed)
-        indexingService.indexingDoc(document, file_bytes)
-        
-        
+        indexing_service.indexing_doc(document, file_bytes)
+
         document.status = DocumentStatus.COMPLETED
         db.commit()
             

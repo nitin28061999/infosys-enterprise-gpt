@@ -1,3 +1,4 @@
+"""ARQ background worker configuration."""
 from arq.connections import RedisSettings
 from config.env_config import envConfig
 from arq import create_pool

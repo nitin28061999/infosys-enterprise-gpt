@@ -1,3 +1,4 @@
+"""Utilities for uploading documents to Supabase storage."""
 from fastapi import UploadFile, HTTPException
 from config.env_config import envConfig
 from config.supabase_config import supabase
@@ -5,31 +6,29 @@ from config.logger_config import logger
 import uuid
 
 
-
 async def supabase_upload(file: UploadFile) -> str:
+    try:
+        extension = file.filename.rsplit(".", 1)[-1].lower()
 
-        try:
-              extension = file.filename.rsplit(".")[-1].lower()
+        if extension not in ["pdf", "docx", "txt"]:
+            raise HTTPException(status_code=400, detail="Only PDF, DOCX and TXT files are allowed.")
 
-              if extension not  in ["pdf", "docx", "txt"]:
-                     raise HTTPException(status_code=400, detail="Only PDF, DOCX and TXT files are allowed.")
+        filename = f"{uuid.uuid4()}.{extension}"
+        path = f"documents/{filename}"
 
-              filename = f"{uuid.uuid4()}.{extension}"
+        file_bytes = await file.read()
 
-              path = f"documents/{filename}"
+        response = supabase.storage.from_(envConfig.SUPABASE_BUCKET).upload(
+            path=path,
+            file=file_bytes,
+            file_options={"content-type": file.content_type},
+        )
 
-              file_bytes = await file.read()
+        logger.info("File uploaded successfully")
+        return path
 
-              response = supabase.storage.from_(envConfig.SUPABASE_BUCKET ).upload(path=path,file=file_bytes,file_options={"content-type": file.content_type})
-
-              logger.info("File uploaded successfully")
-              return path
-
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.exception("Supabase upload failed")
-            raise HTTPException(
-                status_code=500,
-                detail="Failed to upload file."
-    )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Supabase upload failed")
+        raise HTTPException(status_code=500, detail="Failed to upload file.") from e

@@ -1,3 +1,4 @@
+"""Indexing utilities."""
 from io import BytesIO
 from pypdf import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -62,12 +63,10 @@ class EmbeddingService:
 
 class VectorService:
     def __init__(self):
-            self.client = chromadb.PersistentClient(path="./chroma_db")
-            self.collection = self.client.get_or_create_collection(name="documents")
+        self.client = chromadb.PersistentClient(path="./chroma_db")
+        self.collection = self.client.get_or_create_collection(name="documents")
 
-
-    def store_vectorDb(self, document_id, chunks, embeddings, title: str, department: str, owner: str, access_scope: str, confidentiality: str):    
-
+    def store_vector_db(self, document_id, chunks, embeddings, title: str, department: str, owner: str, access_scope: str, confidentiality: str):
         ids = []
         documents = []
         metadatas = []
@@ -84,18 +83,16 @@ class VectorService:
                 "confidentiality": confidentiality,
                 "page_number": chunk.metadata.get("page_number"),
                 "chunk_index": index,
-                # "section": chunk.metadata.get("section"),    # Optional (future use)
-                # "score": 0.0          # Filled during retrieval
             })
 
-
-        for key, value in metadatas[0].items():
-            print(key, value, type(value))
+        if metadatas:
+            for key, value in metadatas[0].items():
+                print(key, value, type(value))
 
         self.collection.add(
-                ids=ids,
-                documents=documents,
-                embeddings=embeddings.tolist(),
-                metadatas=metadatas,)
-        print(self.collection.get(  ids=[ids[0]], include=["metadatas"])
-)
+            ids=ids,
+            documents=documents,
+            embeddings=embeddings.tolist(),
+            metadatas=metadatas,
+        )
+        print(self.collection.get(ids=[ids[0]], include=["metadatas"]))

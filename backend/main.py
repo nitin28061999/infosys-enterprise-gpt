@@ -1,5 +1,6 @@
-from fastapi import FastAPI 
-from config.db_config import createTable
+"""Main FastAPI application."""
+from fastapi import FastAPI
+from config.db_config import create_table
 from routes.main_route import router as main_router
 from utils.exception_handler import register_exception_handlers
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +9,7 @@ import model.main_model
 
 app = FastAPI()
 
-createTable()
+create_table()
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,9 +20,10 @@ app.add_middleware(
 )
 
 
-app.get("/health", status_code=200)
+@app.get("/health", status_code=200)
 def server_health():
-    return {"server is in good health"}
+    """Return server health status."""
+    return {"server": "in good health"}
 
 
 app.include_router(main_router)

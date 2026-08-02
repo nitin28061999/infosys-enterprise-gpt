@@ -1,3 +1,4 @@
+"""Analytics service providing metrics."""
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from config.db_config import get_db
@@ -43,4 +44,4 @@ class AnalyticsService:
                 "helpful_feedback": helpful,
                 "not_helpful_feedback": not_helpful,
                 "average_response_time": round(avg_time or 0, 2)
-                }
+            }
