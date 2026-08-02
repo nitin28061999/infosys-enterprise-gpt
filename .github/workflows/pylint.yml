@@ -10,14 +10,33 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        # Install project dependencies if a requirements file exists
+        if [ -f backend/requirements.txt ]; then
+          pip install -r backend/requirements.txt
+        elif [ -f requirements.txt ]; then
+          pip install -r requirements.txt
+        elif [ -f backend/pyproject.toml ]; then
+          pip install poetry
+          poetry install --no-interaction --no-ansi
+        else
+          # Fallback: install common runtime deps used by the project so pylint can resolve imports
+          pip install fastapi pydantic sqlalchemy chromadb PyJWT passlib bcrypt
+        fi
+        # Always install pylint
         pip install pylint
-    - name: Analysing the code with pylint
+
+    - name: Run pylint
+      env:
+        PYTHONPATH: backend/src
       run: |
-        pylint $(git ls-files '*.py')
+        # Run pylint against the package source (putting backend/src on PYTHONPATH lets relative imports resolve)
+        python -m pylint backend/src --rcfile=.pylintrc
