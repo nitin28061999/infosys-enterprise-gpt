@@ -1,0 +1,45 @@
+{
+  "success": true,
+  "message": "Answer generated successfully",
+  "data": {
+    "answer_id": "ans_12345",
+
+    "answer": "Employees are eligible for work-from-home up to 3 days per week with manager approval.",
+
+    "confidence": 0.94,
+
+    "assumptions": [
+      "This answer is based on the latest indexed HR policy."
+    ],
+
+    "next_action": "Refer to the HR Policy document for eligibility exceptions.",
+
+    "citations": [
+      {
+        "document_id": 4,
+        "document_name": "HR Work From Home Policy.pdf",
+        "page_number": 6,
+        "chunk_index": 12,
+        "section": "Eligibility",
+        "score": 0.93
+      },
+      {
+        "document_id": 4,
+        "document_name": "HR Work From Home Policy.pdf",
+        "page_number": 7,
+        "chunk_index": 13,
+        "section": "Approval Process",
+        "score": 0.90
+      }
+    ],
+
+    "sources": [
+      {
+        "document_id": 4,
+        "title": "HR Work From Home Policy.pdf",
+        "owner": "HR",
+        "effective_date": "2026-01-01"
+      }
+    ]
+  }
+}

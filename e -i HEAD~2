@@ -1,0 +1,255 @@
+[33mcommit 25f8af374da0153cdd11530bc12e56253cee76b6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: NITIN GUPTA <88649588+nitin28061999@users.noreply.github.com>
+Date:   Sat Jul 25 17:44:55 2026 +0530
+
+    git sync
+
+[1mdiff --git a/README.md b/README.md[m
+[1mindex f9bf2cb..957261e 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -1,59 +1,201 @@[m
+ ﻿# 🚀 Infosys AI Knowledge Assistant – Enterprise GPT[m
+ [m
+[31m-An enterprise-grade AI-powered Knowledge Assistant that enables Infosys employees to securely search, retrieve, and interact with internal organizational knowledge using Retrieval-Augmented Generation (RAG), Google Gemini, and Model Context Protocol (MCP).[m
+[32m+[m[32mAn enterprise-grade AI-powered Knowledge Assistant that enables Infosys employees to securely search, retrieve, and interact with organizational knowledge using **Retrieval-Augmented Generation (RAG)**, **Google Gemini**, **Supabase**, and **Model Context Protocol (MCP)**.[m
+ [m
+[31m-The platform transforms enterprise documents such as SOPs, HR policies, project manuals, engineering guides, and sales assets into a searchable knowledge base, providing fast, reliable, and citation-backed answers while enforcing role-based access control.[m
+[32m+[m[32mThe platform transforms enterprise documents such as SOPs, HR policies, engineering manuals, project documentation, and knowledge bases into an intelligent conversational assistant with citation-backed responses and role-based access control.[m
+ [m
+ ---[m
+ [m
+[31m-# 🛠️ Tech Stack[m
+[32m+[m[32m# 📑 Table of Contents[m
+[32m+[m
+[32m+[m[32m- Features[m
+[32m+[m[32m- Tech Stack[m
+[32m+[m[32m- Project Architecture[m
+[32m+[m[32m- Project Structure[m
+[32m+[m[32m- Prerequisites[m
+[32m+[m[32m- Installation[m
+[32m+[m[32m- Environment Variables[m
+[32m+[m[32m- Database Setup[m
+[32m+[m[32m- Running the Application[m
+[32m+[m[32m- API Documentation[m
+[32m+[m[32m- Testing[m
+[32m+[m[32m- Deployment[m
+[32m+[m[32m- Roadmap[m
+[32m+[m[32m- Contributing[m
+[32m+[m[32m- License[m
+ [m
+[31m-### Frontend[m
+[31m-- Next.js 15[m
+[31m-- React[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m# ✨ Features[m
+[32m+[m
+[32m+[m[32m## 🤖 Enterprise AI Assistant[m
+[32m+[m
+[32m+[m[32m- Natural language enterprise search[m
+[32m+[m[32m- Multi-turn conversations[m
+[32m+[m[32m- Citation-backed answers[m
+[32m+[m[32m- Confidence scores[m
+[32m+[m[32m- Source previews[m
+[32m+[m[32m- Conversation history[m
+[32m+[m
+[32m+[m[32m## 📚 Knowledge Management[m
+[32m+[m
+[32m+[m[32m- Upload PDF, DOCX and TXT files[m
+[32m+[m[32m- Automatic document parsing[m
+[32m+[m[32m- Metadata tagging[m
+[32m+[m[32m- Department assignment[m
+[32m+[m[32m- Version management[m
+[32m+[m
+[32m+[m[32m## 🧠 Retrieval-Augmented Generation (RAG)[m
+[32m+[m
+[32m+[m[32m- Semantic search[m
+[32m+[m[32m- Vector embeddings[m
+[32m+[m[32m- Context retrieval[m
+[32m+[m[32m- Grounded AI responses[m
+[32m+[m[32m- Citation generation[m
+[32m+[m
+[32m+[m[32m## 🔐 Enterprise Security[m
+[32m+[m
+[32m+[m[32m- JWT Authentication[m
+[32m+[m[32m- Role-Based Access Control (RBAC)[m
+[32m+[m[32m- Department-level permissions[m
+[32m+[m[32m- Secure API keys[m
+[32m+[m[32m- Audit logging[m
+[32m+[m
+[32m+[m[32m## 📊 Analytics[m
+[32m+[m
+[32m+[m[32m- Query analytics[m
+[32m+[m[32m- User activity[m
+[32m+[m[32m- Failed search tracking[m
+[32m+[m[32m- Retrieval quality metrics[m
+[32m+[m[32m- Feedback dashboard[m
+[32m+[m
+[32m+[m[32m## 🔌 MCP Connectors[m
+[32m+[m
+[32m+[m[32m- File System[m
+[32m+[m[32m- SharePoint *(Planned)*[m
+[32m+[m[32m- Jira *(Planned)*[m
+[32m+[m[32m- GitHub *(Planned)*[m
+[32m+[m[32m- Confluence *(Planned)*[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m# 🛠 Tech Stack[m
+[32m+[m
+[32m+[m[32m## Frontend[m
+[32m+[m
+[32m+[m[32m- Next.js 16[m
+[32m+[m[32m- React 19[m
+ - TypeScript[m
+ - Tailwind CSS[m
+ - ShadCN UI[m
+ [m
+[31m-### Backend[m
+[32m+[m[32m## Backend[m
+[32m+[m
+ - FastAPI[m
+[31m-- Python[m
+[32m+[m[32m- Python 3.11+[m
+ - SQLAlchemy[m
+ - JWT Authentication[m
+ [m
+[31m-### AI & RAG[m
+[32m+[m[32m## AI[m
+[32m+[m
+ - Google Gemini[m
+ - LangChain[m
+ - LangGraph[m
+[32m+[m
+[32m+[m[32m## Vector Database[m
+[32m+[m
+ - ChromaDB[m
+ [m
+[31m-### Database[m
+[32m+[m[32m## Database[m
+[32m+[m
+ - Supabase PostgreSQL[m
+ [m
+[31m-### Document Processing[m
+[32m+[m[32m## Document Processing[m
+[32m+[m
+ - PyPDF[m
+ - python-docx[m
+ - Unstructured[m
+ [m
+[31m-### Deployment[m
+[32m+[m[32m## Deployment[m
+[32m+[m
+ - Vercel[m
+ - Render[m
+ [m
+ ---[m
+ [m
+[31m-# ⚡ Quick Start[m
+[32m+[m[32m# 🏗 Project Architecture[m
+[32m+[m
+[32m+[m[32m```[m
+[32m+[m[32m                Frontend (Next.js)[m
+[32m+[m[32m                        │[m
+[32m+[m[32m                        ▼[m
+[32m+[m[32m                 FastAPI Backend[m
+[32m+[m[32m                        │[m
+[32m+[m[32m      ┌─────────────────┼─────────────────┐[m
+[32m+[m[32m      ▼                 ▼                 ▼[m
+[32m+[m[32m Supabase DB      Google Gemini      ChromaDB[m
+[32m+[m[32m      │                                  │[m
+[32m+[m[32m      └──────────────RAG Pipeline────────┘[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m# 📂 Project Structure[m
+[32m+[m
+[32m+[m[32m```text[m
+[32m+[m[32minfosys-ai-knowledge-assistant-enterprise-gpt/[m
+ [m
+[31m-## 1. Clone the Repository[m
+[32m+[m[32m├── frontend/[m
+[32m+[m[32m│   ├── app/[m
+[32m+[m[32m│   ├── component/[m
+[32m+[m[32m│   ├── lib/[m
+[32m+[m[32m│   ├── public/[m
+[32m+[m[32m│   └── package.json[m
+[32m+[m[32m│[m
+[32m+[m[32m├── backend/[m
+[32m+[m[32m│   ├── api/[m
+[32m+[m[32m│   ├── auth/[m
+[32m+[m[32m│   ├── services/[m
+[32m+[m[32m│   ├── connectors/[m
+[32m+[m[32m│   ├── database/[m
+[32m+[m[32m│   ├── audit/[m
+[32m+[m[32m│   ├── main.py[m
+[32m+[m[32m│   ├── config.py[m
+[32m+[m[32m│   └── requirements.txt[m
+[32m+[m[32m│[m
+[32m+[m[32m├── docs/[m
+[32m+[m[32m├── tests/[m
+[32m+[m[32m├── deployment/[m
+[32m+[m[32m└── README.md[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m# 📋 Prerequisites[m
+[32m+[m
+[32m+[m[32mInstall:[m
+[32m+[m
+[32m+[m[32m- Node.js 20+[m
+[32m+[m[32m- Python 3.11+[m
+[32m+[m[32m- Git[m
+[32m+[m[32m- Supabase Account[m
+[32m+[m[32m- Google AI Studio Account[m
+[32m+[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m# ⚡ Installation[m
+[32m+[m
+[32m+[m[32m## 1. Clone Repository[m
+ [m
+ ```bash[m
+[31m-git clone https://github.com/<your-username>/infosys-ai-knowledge-assistant-enterprise-gpt.git[m
+[32m+[m[32mgit clone https://github.com/nitin28061999/infosys-enterprise-gpt[m
+ [m
+ cd infosys-ai-knowledge-assistant-enterprise-gpt[m
+ ```[m
+ [m
+ ---[m
+ [m
+[31m-## 2. Install Frontend Dependencies[m
+[32m+[m[32m## 2. Frontend Setup[m
+ [m
+ ```bash[m
+ cd frontend[m
+[36m@@ -63,7 +205,7 @@[m [mnpm install[m
+ [m
+ ---[m
+ [m
+[31m-## 3. Install Backend Dependencies[m
+[32m+[m[32m## 3. Backend Setup[m
+ [m
+ ```bash[m
+ cd ../backend[m
+[36m@@ -91,103 +233,143 @@[m [mpip install -r requirements.txt[m
+ [m
+ ---[m
+ [m
+[31m-# ☁️ Set Up Supabase[m
+[31m-[m
+[31m-1. Go to the **Supabase Dashboard**[m
+[31m-2. Create a new project[m
+[31m-3. Wait until provisioning finishes[m
+[31m-4. Open[m
+[32m+[m[32m# ☁️ Supabase Setup[m
+ [m
+[31m-```[m
+[31m-Settings[m
+[31m-    ├── API[m
+[31m-    └── Database[m
+[31m-```[m
+[32m+[m[32mCreate a new project fro
