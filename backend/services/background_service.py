@@ -4,6 +4,7 @@ from config.db_config import SessionLocal
 from src.documents.document_model import Document, DocumentStatus
 import logging
 from services.indexing_service import create_texts, create_chunks, EmbeddingService, VectorService
+from genAI.ingestion_pipeline.embedding_jobs.vector_indexer import EnterprisePDFIndexer
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,9 @@ async def index_document(ctx, id: int):
     
             
         # Background Indexing (Extract → Chunk → Embed)
-        indexingService.indexingDoc(document, file_bytes)
+        # indexingService.indexingDoc(document, file_bytes)
+        enterprise = EnterprisePDFIndexer()
+        enterprise.process_and_index(document, file_bytes)
         
         
         document.status = DocumentStatus.COMPLETED

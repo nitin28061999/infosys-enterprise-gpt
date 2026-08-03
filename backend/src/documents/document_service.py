@@ -9,8 +9,9 @@ from services.background_service import index_document
 from .document_model import DocumentStatus
 from config.arq_config import ArqService
 import chromadb
-
-
+from langchain_chroma import Chroma
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from config.env_config import envConfig
 
 
 
@@ -19,6 +20,10 @@ class DocumentService:
     def __init__(self, db: Session=Depends(get_db)):
         self.db = db
         self.arq_service = ArqService()
+        self.embeddings = GoogleGenerativeAIEmbeddings(
+                            model="gemini-embedding-2-preview",
+                            google_api_key=envConfig.GEMINI_API_KEY
+                        )
 
     async def upload_file(self, data, file: UploadFile):
         
@@ -134,14 +139,28 @@ class DocumentService:
 
 
 
-    def get_chromaDB(self):
-        client = chromadb.PersistentClient(path="./chroma_db")
-        collection = client.get_collection("documents")
+    # def get_chromaDB(self):
+    #     client = chromadb.PersistentClient(path="./chroma_db")
+    #     collection = client.get_collection("documents")
 
-        data = collection.get(
-            include=["documents", "metadatas"]
-        )
+    #     data = collection.get(
+    #         include=["documents", "metadatas"]
+    #     )
+
+    #     return data
+
+
+    def get_chromaDB(self):
+
+        vector_store = Chroma(
+        persist_directory="./genAI/vector_db",
+        embedding_function=self.embeddings,
+        collection_name="documents"
+    )
+
+        data = vector_store.get()
 
         return data
+        
 
  
