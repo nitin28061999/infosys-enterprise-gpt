@@ -1,0 +1,9 @@
+[server]
+headless = true
+
+[runner]
+# Prevents Streamlit from deep-inspecting python modules
+magicEnabled = false
+
+[browser]
+gatherUsageStats = false

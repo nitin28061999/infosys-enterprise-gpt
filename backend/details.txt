@@ -43,3 +43,33 @@
     ]
   }
 }
+
+
+
+
+
+
+tool selection :
+
+LLM-based (Most Common)
+Instead of writing rules, ask Gemini.
+Prompt:
+You are an AI Router.
+
+Available tools:
+
+HR
+Engineering
+Sales
+Calculator
+Weather
+
+Question:
+
+"What is maternity leave?"
+
+Return ONLY one tool.
+Gemini replies
+HR
+Then your backend calls the HR retriever.
+
