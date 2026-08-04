@@ -15,8 +15,8 @@ from config.db_config import get_db
 from config.logger_config import logger
 from services.indexing_service import EmbeddingService, VectorService
 from services.llm_service import GeminiService
-from audit.audit_model import Audit, AuditStatus
-from audit.audit_service import AuditService
+from src.audit.audit_model import Audit, AuditStatus
+from src.audit.audit_service import AuditService
 from utils.prompt_util import prompt_inbuilt
 
 

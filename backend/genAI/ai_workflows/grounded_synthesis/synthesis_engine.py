@@ -141,8 +141,8 @@ class EnterpriseGroundedEngine:
             )
 
             # 3. No documents found for this department
-            status = AuditStatus.NO_ANSWER
             if not results_with_scores:
+                status = AuditStatus.NO_ANSWER
                 return {
                     "answer": f"No documents found for the '{department}' department.",
                     "confidence_score": 0.0,

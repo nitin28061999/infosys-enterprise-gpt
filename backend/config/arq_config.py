@@ -4,8 +4,8 @@ from arq import create_pool
 from services.background_service import index_document
 
 redis_settings = RedisSettings(
-    # host=envConfig.REDIS_HOST,    # prod
-    host=envConfig.REDIS_LOCAL_HOST,    # dev
+    host=envConfig.REDIS_HOST,    # prod
+    # host=envConfig.REDIS_LOCAL_HOST,    # dev
     port=envConfig.REDIS_PORT
 )
 
