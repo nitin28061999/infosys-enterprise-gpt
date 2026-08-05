@@ -1,5 +1,5 @@
 from enum import Enum as enum
-from sqlalchemy import String, Enum, Boolean
+from sqlalchemy import Column, String, Integer, Enum, Boolean 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from config.db_config import Base
 from typing import TYPE_CHECKING
@@ -36,6 +36,7 @@ class User(Base):
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(Enum(Role), default=Role.EMPLOYEE, nullable=False)
     department: Mapped[Department] = mapped_column(Enum(Department), nullable=False)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     # ADD THIS FIELD
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

@@ -15,15 +15,17 @@ class RatingEnum(str, Enum):
     NOT_HELPFUL="NOT_HELPFUL"
 
 
+
 class Feedback(Base):
     __tablename__="feedback"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True) 
-    user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
-    audit_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('audit_logs.id', ondelete="CASCADE"), nullable=True)
-    rating: Mapped[RatingEnum] = mapped_column(SQLEnum(RatingEnum))
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    audit_id: Mapped[int] = mapped_column(Integer, ForeignKey('audit_logs.id', ondelete="CASCADE"), nullable=False, index=True)
+    rating: Mapped[RatingEnum] = mapped_column(SQLEnum(RatingEnum), nullable=False)
     comment : Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False, index=True)
+    updated_at : Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     # relationships 
     user: Mapped["User"] = relationship("User", back_populates="feedback")

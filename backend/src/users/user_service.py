@@ -14,8 +14,8 @@ class UserService:
     
 
     def get_user(self, id: int):
-
-        user = self.db.query(User).filter(User.id == id).first()
+        
+        user = self.db.query(User).filter(User.id == id, User.is_deleted == False).first()
 
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -27,14 +27,14 @@ class UserService:
 
     def get_users(self):
 
-        users = self.db.query(User).filter(User.role == Role.EMPLOYEE).all()
+        users = self.db.query(User).filter(User.role == Role.EMPLOYEE, User.is_deleted == False).all()
         return users
 
     
 
-    def update_user(self, id: int, data: UserUpdate):
-
-        user = self.db.query(User).filter(User.id == id).first()
+    def update_user(self, user_id: int, data: UserUpdate):
+        
+        user = self.db.query(User).filter(User.id == user_id, User.is_deleted == False).first()
 
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -55,25 +55,27 @@ class UserService:
         
         except Exception as e:
             self.db.rollback()
-            logger.exception("Failed to update user. user_id=%s", id)
+            logger.exception("Failed to update user. user_id=%s", user_id)
             raise
             
 
 
-    def delete_user(self, id:int):
+    def delete_user(self, user_id:int):
 
-        user = self.db.query(User).filter(User.id == id).first()
+        user = self.db.query(User).filter(User.id == user_id, User.is_deleted == False).first()
 
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
         try:
-            self.db.delete(user)
+            user.is_deleted = True
             self.db.commit()
+            self.db.refresh(user)
+            return user
         except:
             self.db.rollback()
             logger.exception("Failed to delete user. ")
-            raise
+            raise HTTPException(status_code=400, detail="Failed to delete user")
 
         
 

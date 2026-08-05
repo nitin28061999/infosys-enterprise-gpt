@@ -33,6 +33,7 @@ class AnalyticsService:
         no_answers = self.db.query(Audit).filter(Audit.status == AuditStatus.NO_ANSWER).count()
 
         # feedback 
+        total_feedback = self.db.query(Feedback).count()
         helpful = self.db.query(Feedback).filter(Feedback.rating == RatingEnum.HELPFUL).count()
         not_helpful = self.db.query(Feedback).filter(Feedback.rating == RatingEnum.NOT_HELPFUL).count()
 
@@ -46,6 +47,7 @@ class AnalyticsService:
                 "total_queries": total_queries,
                 "successful_answers": successful_answers,
                 "no_answer": no_answers,
+                "total_feedback": total_feedback,
                 "helpful_feedback": helpful,
                 "not_helpful_feedback": not_helpful,
                 "average_response_time": round(avg_time or 0, 2)
