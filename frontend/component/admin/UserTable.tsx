@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { adminApi, ApiError, type AdminUser } from "@/lib/api";
+import { adminApi, ApiError, type UserResponse } from "@/lib/api";
 
 export default function UserTable() {
-  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [users, setUsers] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +25,7 @@ export default function UserTable() {
           <tr>
             <th className="px-6 py-3 text-left">Name</th>
             <th className="px-6 py-3 text-left">Email</th>
-            <th className="px-6 py-3 text-left">Role</th>
+            <th className="px-6 py-3 text-left">Department</th>
           </tr>
         </thead>
 
@@ -54,11 +54,11 @@ export default function UserTable() {
             </tr>
           )}
 
-          {users.map((user) => (
-            <tr key={user.id} className="border-t hover:bg-slate-50">
-              <td className="px-6 py-4">{user.name}</td>
-              <td className="px-6 py-4">{user.email}</td>
-              <td className="px-6 py-4">{user.role}</td>
+          {users.map((u) => (
+            <tr key={u.id} className="border-t hover:bg-slate-50">
+              <td className="px-6 py-4">{u.name}</td>
+              <td className="px-6 py-4">{u.email}</td>
+              <td className="px-6 py-4">{u.department}</td>
             </tr>
           ))}
         </tbody>

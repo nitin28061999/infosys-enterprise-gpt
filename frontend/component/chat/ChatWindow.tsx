@@ -2,10 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import ChatMessage from "./ChatMessage";
-import type { ChatMessage as ChatMessageType } from "@/lib/api";
+
+export interface DisplayMessage {
+  id: string;
+  role: "user" | "assistant";
+  message: string;
+}
 
 interface ChatWindowProps {
-  messages: ChatMessageType[];
+  messages: DisplayMessage[];
   loading: boolean;
   error: string | null;
 }
@@ -19,25 +24,27 @@ export default function ChatWindow({ messages, loading, error }: ChatWindowProps
 
   return (
     <div className="rounded-xl border bg-slate-50 p-6 shadow-sm h-[600px] overflow-y-auto">
-      {loading && messages.length === 0 && (
-        <p className="text-sm text-slate-400">Loading conversation...</p>
-      )}
-
       {error && (
         <p className="text-sm text-red-600" role="alert">
           {error}
         </p>
       )}
 
-      {!loading && !error && messages.length === 0 && (
+      {messages.length === 0 && !loading && (
         <p className="text-sm text-slate-400">
-          No messages yet. Ask a question to get started.
+          No messages yet. Ask a question to get started. (Conversation
+          history isn&apos;t persisted by the backend yet — this resets on
+          page refresh.)
         </p>
       )}
 
       {messages.map((m) => (
         <ChatMessage key={m.id} role={m.role} message={m.message} />
       ))}
+
+      {loading && (
+        <p className="text-sm text-slate-400">Thinking...</p>
+      )}
 
       <div ref={bottomRef} />
     </div>

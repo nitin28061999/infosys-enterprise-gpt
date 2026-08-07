@@ -6,25 +6,32 @@ import Sidebar from "@/component/layout/Sidebar";
 import Footer from "@/component/layout/Footer";
 import PageHeader from "@/component/common/Pageheader";
 import AnalyticsCard from "@/component/analytics/AnalyticsCard";
-import QueryChart from "@/component/analytics/QueryChart";
-import UsageChart from "@/component/analytics/UsageChart";
-import FeedbackChart from "@/component/analytics/FeedbackChart";
-import { analyticsApi, ApiError, type AnalyticsSummary } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
+import { analyticsApi, ApiError, type AnalyticsMetrics } from "@/lib/api";
 
 export default function AnalyticsPage() {
-  const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
+  const { user, loading: authLoading } = useAuth();
+  const [metrics, setMetrics] = useState<AnalyticsMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const isAdmin = user?.role === "ADMIN";
+
   useEffect(() => {
+    if (!isAdmin) {
+      setLoading(false);
+      return;
+    }
     analyticsApi
-      .getSummary()
-      .then(setSummary)
+      .getMetrics()
+      .then(setMetrics)
       .catch((err) =>
         setError(err instanceof ApiError ? err.message : "Failed to load analytics.")
       )
       .finally(() => setLoading(false));
-  }, []);
+  }, [isAdmin]);
+
+  if (authLoading) return null;
 
   return (
     <>
@@ -36,43 +43,59 @@ export default function AnalyticsPage() {
         <main className="flex-1 p-8">
           <PageHeader
             title="Analytics Dashboard"
-            description="Monitor enterprise AI usage, document activity, and user engagement."
+            description="Monitor enterprise AI usage, document activity, and feedback."
           />
 
-          {error && (
-            <p className="mb-6 text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          )}
-
-          <div className="mb-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {loading || !summary
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-32 animate-pulse rounded-xl border border-slate-200 bg-white"
-                  />
-                ))
-              : summary.cards.map((card) => (
-                  <AnalyticsCard
-                    key={card.title}
-                    title={card.title}
-                    value={card.value}
-                    subtitle={card.subtitle}
-                  />
-                ))}
-          </div>
-
-          {summary && (
+          {!isAdmin ? (
+            <div className="mx-auto max-w-2xl rounded-xl bg-white p-8 text-center shadow">
+              <p className="text-slate-600">
+                Analytics are restricted to Admins. Your account role is{" "}
+                <span className="font-semibold">{user?.role ?? "unknown"}</span>.
+              </p>
+            </div>
+          ) : (
             <>
-              <div className="grid gap-6 lg:grid-cols-2">
-                <QueryChart data={summary.queryVolume} />
-                <UsageChart data={summary.usage} />
-              </div>
+              {error && (
+                <p className="mb-6 text-sm text-red-600" role="alert">
+                  {error}
+                </p>
+              )}
 
-              <div className="mt-6">
-                <FeedbackChart data={summary.feedback} />
-              </div>
+              {loading || !metrics ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-32 animate-pulse rounded-xl border border-slate-200 bg-white"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <AnalyticsCard
+                      title="Documents"
+                      value={String(metrics.total_documents)}
+                      subtitle={`${metrics.completed_documents} indexed · ${metrics.failed_documents} failed`}
+                    />
+                    <AnalyticsCard
+                      title="Queries"
+                      value={String(metrics.total_queries)}
+                      subtitle={`${metrics.successful_answers} answered · ${metrics.no_answer} no answer`}
+                    />
+                    <AnalyticsCard
+                      title="Feedback"
+                      value={String(metrics.total_feedback)}
+                      subtitle={`${metrics.helpful_feedback} helpful · ${metrics.not_helpful_feedback} not helpful`}
+                    />
+                    <AnalyticsCard
+                      title="Avg Response Time"
+                      value={`${metrics.average_response_time} ms`}
+                      subtitle="Across all queries"
+                    />
+                  </div>
+                </>
+              )}
             </>
           )}
         </main>

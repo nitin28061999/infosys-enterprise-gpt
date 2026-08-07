@@ -1,66 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { settingsApi, ApiError } from "@/lib/api";
 
+// The backend's PATCH /api/user/{user_id} is admin-only — a regular user
+// can't update their own profile yet. Showing real account info read-only
+// rather than a form that would fail for most users.
 export default function AccountSettings() {
   const { user } = useAuth();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (user) {
-      setName(user.name);
-      setEmail(user.email);
-    }
-  }, [user]);
-
-  async function handleSave() {
-    setStatus("saving");
-    setError(null);
-    try {
-      await settingsApi.updateProfile(name, email);
-      setStatus("saved");
-    } catch (err) {
-      setStatus("error");
-      setError(err instanceof ApiError ? err.message : "Failed to save changes.");
-    }
-  }
 
   return (
     <div className="rounded-xl bg-white p-6 shadow">
       <h2 className="mb-6 text-2xl font-bold">Account Settings</h2>
 
-      <div className="space-y-4">
-        <input
-          className="w-full rounded-lg border p-3"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <input
-          className="w-full rounded-lg border p-3"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        {error && (
-          <p className="text-sm text-red-600" role="alert">
-            {error}
-          </p>
-        )}
-
-        <button
-          onClick={handleSave}
-          disabled={status === "saving"}
-          className="rounded-lg bg-blue-600 px-6 py-3 text-white disabled:opacity-60"
-        >
-          {status === "saving" ? "Saving..." : status === "saved" ? "Saved" : "Save Changes"}
-        </button>
+      <div className="space-y-4 text-sm">
+        <div>
+          <p className="text-slate-500">Name</p>
+          <p className="font-medium text-slate-800">{user?.name ?? "—"}</p>
+        </div>
+        <div>
+          <p className="text-slate-500">Email</p>
+          <p className="font-medium text-slate-800">{user?.email ?? "—"}</p>
+        </div>
+        <div>
+          <p className="text-slate-500">Department</p>
+          <p className="font-medium text-slate-800">{user?.department ?? "—"}</p>
+        </div>
+        <div>
+          <p className="text-slate-500">Role</p>
+          <p className="font-medium text-slate-800">{user?.role ?? "—"}</p>
+        </div>
       </div>
+
+      <p className="mt-6 text-xs text-slate-400">
+        Self-service profile editing isn&apos;t available yet — the backend
+        only allows admins to update user records.
+      </p>
     </div>
   );
 }

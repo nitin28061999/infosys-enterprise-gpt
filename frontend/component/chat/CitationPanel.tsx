@@ -15,13 +15,24 @@ export default function CitationPanel({ citations }: CitationPanelProps) {
         </p>
       ) : (
         <div className="space-y-4">
-          {citations.map((item) => (
+          {citations.map((item, i) => (
             <div
-              key={`${item.title}-${item.page}`}
+              key={`${item.document_id ?? i}-${item.page_number ?? i}`}
               className="rounded-lg border p-4 hover:bg-slate-50"
             >
-              <h3 className="font-semibold">{item.title}</h3>
-              <p className="text-sm text-slate-500">Page {item.page}</p>
+              <h3 className="font-semibold">
+                {item.document_name ?? "Untitled document"}
+              </h3>
+              {item.page_number !== undefined && (
+                <p className="text-sm text-slate-500">
+                  Page {item.page_number}
+                </p>
+              )}
+              {item.text && (
+                <p className="mt-2 text-sm text-slate-600 line-clamp-3">
+                  {item.text}
+                </p>
+              )}
             </div>
           ))}
         </div>

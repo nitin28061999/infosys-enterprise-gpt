@@ -7,44 +7,85 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { authApi, setToken, CurrentUser } from "@/lib/api";
+import {
+  authApi,
+  setToken,
+  decodeToken,
+  type UserResponse,
+  type TokenPayload,
+} from "@/lib/api";
+
+interface AuthUser extends UserResponse {
+  role: TokenPayload["role"];
+}
 
 interface AuthContextValue {
-  user: CurrentUser | null;
+  user: AuthUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (
+    name: string,
+    email: string,
+    department: UserResponse["department"],
+    password: string
+  ) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+function getStoredToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem("auth_token");
+}
+
+async function loadUserFromToken(token: string): Promise<AuthUser | null> {
+  const payload = decodeToken(token);
+  if (!payload) return null;
+
+  // Token is expired
+  if (payload.exp * 1000 < Date.now()) return null;
+
+  const details = await authApi.getUser(payload.id);
+  return { ...details, role: payload.role };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<CurrentUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // On mount, if a token is already stored, fetch the current user so a
-    // page refresh doesn't drop the session.
-    authApi
-      .me()
+    const token = getStoredToken();
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    loadUserFromToken(token)
       .then(setUser)
-      .catch(() => setUser(null))
+      .catch(() => {
+        setToken(null);
+        setUser(null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
   async function login(email: string, password: string) {
-    const { access_token } = await authApi.login(email, password);
+    const { access_token } = await authApi.signin(email, password);
     setToken(access_token);
-    const me = await authApi.me();
+    const me = await loadUserFromToken(access_token);
     setUser(me);
   }
 
-  async function signup(name: string, email: string, password: string) {
-    const { access_token } = await authApi.signup(name, email, password);
-    setToken(access_token);
-    const me = await authApi.me();
-    setUser(me);
+  async function signup(
+    name: string,
+    email: string,
+    department: UserResponse["department"],
+    password: string
+  ) {
+    await authApi.signup({ name, email, department, password });
+    // Signup doesn't return a token — sign in right after with the same credentials.
+    await login(email, password);
   }
 
   function logout() {
