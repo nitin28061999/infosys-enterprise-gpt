@@ -4,22 +4,22 @@ import { useState } from "react";
 import Link from "next/link";
 import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
+import { useRouter } from "next/navigation";
+import { useEnterpriseData } from "@/lib/enterprise-store";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const { signIn } = useEnterpriseData();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log({
-      email,
-      password,
-    });
-
-    // TODO:
-    // Connect Supabase Authentication
-    // Redirect to Dashboard
+    if (!email || !password) { setError("Enter your email and password to continue."); return; }
+    signIn(email);
+    router.push("/dashboard");
   };
 
   return (
@@ -89,6 +89,7 @@ export default function LoginPage() {
           >
             Login
           </Button>
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
         </form>
 
@@ -97,7 +98,7 @@ export default function LoginPage() {
           Don't have an account?{" "}
 
           <Link
-            href="/auth/signup"
+            href="/auth/Signup"
             className="font-semibold text-blue-600 hover:underline"
           >
             Sign Up
