@@ -1,18 +1,15 @@
-"use client";
-
-import Navbar from "@/component/layout/Navbar";
+﻿import Navbar from "@/component/layout/Navbar";
 import Sidebar from "@/component/layout/Sidebar";
 import Footer from "@/component/layout/Footer";
+
 import PageHeader from "@/component/common/Pageheader";
+
+import RoleCard from "@/component/admin/Rolecard";
+import ConnectorCard from "@/component/admin/ConnectorCard";
 import UserTable from "@/component/admin/UserTable";
-import { useAuth } from "@/lib/auth-context";
+import AuditTable from "@/component/admin/AuditTable";
 
 export default function AdminPage() {
-  const { user, loading } = useAuth();
-  const isAdmin = user?.role === "ADMIN";
-
-  if (loading) return null;
-
   return (
     <>
       <Navbar />
@@ -23,29 +20,86 @@ export default function AdminPage() {
         <main className="flex-1 p-8">
           <PageHeader
             title="Admin Panel"
-            description="Manage users in your enterprise workspace."
+            description="Manage users, enterprise roles, connectors, and audit logs."
           />
 
-          {!isAdmin ? (
-            <div className="mx-auto max-w-2xl rounded-xl bg-white p-8 text-center shadow">
-              <p className="text-slate-600">
-                This page is restricted to Admins. Your account role is{" "}
-                <span className="font-semibold">{user?.role ?? "unknown"}</span>.
-              </p>
-            </div>
-          ) : (
-            <section>
-              <h2 className="mb-4 text-xl font-semibold text-slate-800">
-                User Management
-              </h2>
-              <UserTable />
+          {/* Role Cards */}
+          <section className="mb-10">
+            <h2 className="mb-4 text-xl font-semibold text-slate-800">
+              User Roles
+            </h2>
 
-              <p className="mt-4 text-sm text-slate-400">
-                Roles, connectors, and audit-log views aren&apos;t available —
-                the backend doesn&apos;t expose those endpoints yet.
-              </p>
-            </section>
-          )}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <RoleCard
+                title="Administrator"
+                users={4}
+                description="Full access to platform configuration and user management."
+              />
+
+              <RoleCard
+                title="Knowledge Owner"
+                users={12}
+                description="Manage enterprise documents and knowledge repositories."
+              />
+
+              <RoleCard
+                title="Employee"
+                users={156}
+                description="Search enterprise knowledge and interact with Enterprise GPT."
+              />
+            </div>
+          </section>
+
+          {/* Connector Cards */}
+          <section className="mb-10">
+            <h2 className="mb-4 text-xl font-semibold text-slate-800">
+              Enterprise Connectors
+            </h2>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <ConnectorCard
+                name="SharePoint"
+                status="Connected"
+                description="Enterprise document repository."
+              />
+
+              <ConnectorCard
+                name="GitHub"
+                status="Disconnected"
+                description="Engineering repositories."
+              />
+
+              <ConnectorCard
+                name="Jira"
+                status="Connected"
+                description="Project and issue tracking."
+              />
+
+              <ConnectorCard
+                name="Confluence"
+                status="Disconnected"
+                description="Knowledge base and documentation."
+              />
+            </div>
+          </section>
+
+          {/* Users */}
+          <section className="mb-10">
+            <h2 className="mb-4 text-xl font-semibold text-slate-800">
+              User Management
+            </h2>
+
+            <UserTable />
+          </section>
+
+          {/* Audit Logs */}
+          <section>
+            <h2 className="mb-4 text-xl font-semibold text-slate-800">
+              Audit Logs
+            </h2>
+
+            <AuditTable />
+          </section>
         </main>
       </div>
 

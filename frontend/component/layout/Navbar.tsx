@@ -1,13 +1,7 @@
-"use client";
-
-import Link from "next/link";
+﻿import Link from "next/link";
 import Logo from "../common/Logo";
-import ProfileMenu from "./ProfileMenu";
-import { useAuth } from "@/lib/auth-context";
 
 export default function Navbar() {
-  const { user, loading } = useAuth();
-
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
@@ -30,16 +24,12 @@ export default function Navbar() {
             Upload
           </Link>
 
-          {loading ? null : user ? (
-            <ProfileMenu />
-          ) : (
-            <Link
-              href="/auth/login"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-            >
-              Login
-            </Link>
-          )}
+          <Link
+            href="/login"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+          >
+            Login
+          </Link>
         </nav>
       </div>
     </header>

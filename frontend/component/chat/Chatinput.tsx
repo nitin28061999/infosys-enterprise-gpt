@@ -1,43 +1,32 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import Button from "@/component/ui/Button";
-import Input from "@/component/ui/Input";
 
-interface ChatInputProps {
-  onSend: (message: string) => Promise<void>;
-  disabled?: boolean;
-}
+export default function ChatInput() {
+  const [question, setQuestion] = useState("");
 
-export default function ChatInput({ onSend, disabled }: ChatInputProps) {
-  const [value, setValue] = useState("");
-  const [sending, setSending] = useState(false);
+  const sendMessage = () => {
+    if (!question.trim()) return;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = value.trim();
-    if (!trimmed || sending) return;
-
-    setSending(true);
-    try {
-      await onSend(trimmed);
-      setValue("");
-    } finally {
-      setSending(false);
-    }
+    alert(`Question: ${question}`);
+    setQuestion("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-3">
-      <Input
-        placeholder="Ask about HR policy, SOPs, engineering docs..."
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        disabled={disabled || sending}
+    <div className="flex gap-3 rounded-xl border bg-white p-4 shadow-sm">
+      <input
+        className="flex-1 rounded-lg border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Ask anything about your enterprise knowledge..."
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
       />
-      <Button type="submit" disabled={disabled || sending || !value.trim()}>
-        {sending ? "Sending..." : "Send"}
-      </Button>
-    </form>
+
+      <button
+        onClick={sendMessage}
+        className="rounded-lg bg-blue-600 px-6 text-white hover:bg-blue-700"
+      >
+        Send
+      </button>
+    </div>
   );
 }
