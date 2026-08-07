@@ -1,39 +1,29 @@
-﻿const activities = [
-  {
-    id: 1,
-    title: "HR Policy uploaded",
-    time: "10 mins ago",
-  },
-  {
-    id: 2,
-    title: "Engineering Guide updated",
-    time: "1 hour ago",
-  },
-  {
-    id: 3,
-    title: "AI answered 145 questions",
-    time: "Today",
-  },
-];
+import type { ActivityItem } from "@/lib/api";
 
-export default function ActivityCard() {
+interface ActivityCardProps {
+  activities: ActivityItem[];
+}
+
+export default function ActivityCard({ activities }: ActivityCardProps) {
   return (
     <div className="rounded-xl border bg-white p-6 shadow-sm">
-      <h2 className="mb-5 text-xl font-semibold">
-        Recent Activity
-      </h2>
+      <h2 className="mb-5 text-xl font-semibold">Recent Activity</h2>
 
-      <div className="space-y-4">
-        {activities.map((activity) => (
-          <div
-            key={activity.id}
-            className="rounded-lg border border-slate-200 p-4 hover:bg-slate-50"
-          >
-            <p className="font-medium">{activity.title}</p>
-            <p className="text-sm text-slate-500">{activity.time}</p>
-          </div>
-        ))}
-      </div>
+      {activities.length === 0 ? (
+        <p className="text-sm text-slate-400">No recent activity.</p>
+      ) : (
+        <div className="space-y-4">
+          {activities.map((activity) => (
+            <div
+              key={activity.id}
+              className="rounded-lg border border-slate-200 p-4 hover:bg-slate-50"
+            >
+              <p className="font-medium">{activity.title}</p>
+              <p className="text-sm text-slate-500">{activity.time}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

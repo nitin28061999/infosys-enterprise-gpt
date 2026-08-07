@@ -1,20 +1,32 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
+import { authApi, ApiError } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleReset = (e: React.FormEvent) => {
+  const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSubmitting(true);
 
-    console.log(email);
-
-    // TODO:
-    // Connect Supabase Password Reset
+    try {
+      await authApi.forgotPassword(email);
+      setSent(true);
+    } catch (err) {
+      setError(
+        err instanceof ApiError ? err.message : "Unable to send reset link."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -29,20 +41,33 @@ export default function ForgotPasswordPage() {
           Enter your email to receive a password reset link.
         </p>
 
-        <form onSubmit={handleReset} className="space-y-5">
+        {sent ? (
+          <p className="rounded-lg bg-green-50 p-4 text-center text-green-700">
+            If an account exists for {email}, a reset link is on its way.
+          </p>
+        ) : (
+          <form onSubmit={handleReset} className="space-y-5">
 
-          <Input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+            <Input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-          <Button type="submit" className="w-full">
-            Send Reset Link
-          </Button>
+            {error && (
+              <p className="text-sm text-red-600" role="alert">
+                {error}
+              </p>
+            )}
 
-        </form>
+            <Button type="submit" className="w-full" disabled={submitting}>
+              {submitting ? "Sending..." : "Send Reset Link"}
+            </Button>
+
+          </form>
+        )}
 
         <p className="mt-6 text-center text-sm">
           <Link

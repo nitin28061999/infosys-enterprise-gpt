@@ -1,22 +1,45 @@
-﻿import ChatMessage from "./ChatMessage";
+"use client";
 
-export default function ChatWindow() {
+import { useEffect, useRef } from "react";
+import ChatMessage from "./ChatMessage";
+import type { ChatMessage as ChatMessageType } from "@/lib/api";
+
+interface ChatWindowProps {
+  messages: ChatMessageType[];
+  loading: boolean;
+  error: string | null;
+}
+
+export default function ChatWindow({ messages, loading, error }: ChatWindowProps) {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="rounded-xl border bg-slate-50 p-6 shadow-sm h-[600px] overflow-y-auto">
-      <ChatMessage
-        role="assistant"
-        message="Hello! I am your Enterprise AI Assistant. How can I help you today?"
-      />
+      {loading && messages.length === 0 && (
+        <p className="text-sm text-slate-400">Loading conversation...</p>
+      )}
 
-      <ChatMessage
-        role="user"
-        message="Explain the company's leave policy."
-      />
+      {error && (
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
+      )}
 
-      <ChatMessage
-        role="assistant"
-        message="According to the HR Leave Policy, employees receive 24 annual leave days and 12 sick leave days."
-      />
+      {!loading && !error && messages.length === 0 && (
+        <p className="text-sm text-slate-400">
+          No messages yet. Ask a question to get started.
+        </p>
+      )}
+
+      {messages.map((m) => (
+        <ChatMessage key={m.id} role={m.role} message={m.message} />
+      ))}
+
+      <div ref={bottomRef} />
     </div>
   );
 }

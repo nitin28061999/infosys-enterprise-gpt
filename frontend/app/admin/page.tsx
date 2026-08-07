@@ -1,15 +1,39 @@
-﻿import Navbar from "@/component/layout/Navbar";
+"use client";
+
+import { useEffect, useState } from "react";
+import Navbar from "@/component/layout/Navbar";
 import Sidebar from "@/component/layout/Sidebar";
 import Footer from "@/component/layout/Footer";
-
 import PageHeader from "@/component/common/Pageheader";
-
 import RoleCard from "@/component/admin/Rolecard";
 import ConnectorCard from "@/component/admin/ConnectorCard";
 import UserTable from "@/component/admin/UserTable";
 import AuditTable from "@/component/admin/AuditTable";
+import {
+  adminApi,
+  ApiError,
+  type RoleSummary,
+  type ConnectorStatus,
+} from "@/lib/api";
 
 export default function AdminPage() {
+  const [roles, setRoles] = useState<RoleSummary[]>([]);
+  const [connectors, setConnectors] = useState<ConnectorStatus[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    Promise.all([adminApi.getRoles(), adminApi.getConnectors()])
+      .then(([r, c]) => {
+        setRoles(r);
+        setConnectors(c);
+      })
+      .catch((err) =>
+        setError(err instanceof ApiError ? err.message : "Failed to load admin data.")
+      )
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -23,6 +47,12 @@ export default function AdminPage() {
             description="Manage users, enterprise roles, connectors, and audit logs."
           />
 
+          {error && (
+            <p className="mb-6 text-sm text-red-600" role="alert">
+              {error}
+            </p>
+          )}
+
           {/* Role Cards */}
           <section className="mb-10">
             <h2 className="mb-4 text-xl font-semibold text-slate-800">
@@ -30,23 +60,21 @@ export default function AdminPage() {
             </h2>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <RoleCard
-                title="Administrator"
-                users={4}
-                description="Full access to platform configuration and user management."
-              />
-
-              <RoleCard
-                title="Knowledge Owner"
-                users={12}
-                description="Manage enterprise documents and knowledge repositories."
-              />
-
-              <RoleCard
-                title="Employee"
-                users={156}
-                description="Search enterprise knowledge and interact with Enterprise GPT."
-              />
+              {loading
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-40 animate-pulse rounded-xl border border-slate-200 bg-white"
+                    />
+                  ))
+                : roles.map((role) => (
+                    <RoleCard
+                      key={role.title}
+                      title={role.title}
+                      users={role.users}
+                      description={role.description}
+                    />
+                  ))}
             </div>
           </section>
 
@@ -57,29 +85,21 @@ export default function AdminPage() {
             </h2>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <ConnectorCard
-                name="SharePoint"
-                status="Connected"
-                description="Enterprise document repository."
-              />
-
-              <ConnectorCard
-                name="GitHub"
-                status="Disconnected"
-                description="Engineering repositories."
-              />
-
-              <ConnectorCard
-                name="Jira"
-                status="Connected"
-                description="Project and issue tracking."
-              />
-
-              <ConnectorCard
-                name="Confluence"
-                status="Disconnected"
-                description="Knowledge base and documentation."
-              />
+              {loading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-40 animate-pulse rounded-xl border border-slate-200 bg-white"
+                    />
+                  ))
+                : connectors.map((connector) => (
+                    <ConnectorCard
+                      key={connector.name}
+                      name={connector.name}
+                      status={connector.status}
+                      description={connector.description}
+                    />
+                  ))}
             </div>
           </section>
 

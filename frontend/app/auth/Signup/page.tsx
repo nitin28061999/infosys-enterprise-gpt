@@ -1,17 +1,25 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Input from "@/component/ui/Input";
 import Button from "@/component/ui/Button";
+import { useAuth } from "@/lib/auth-context";
+import { ApiError } from "@/lib/api";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const { signup } = useAuth();
+
   const [form, setForm] = useState({
     fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
@@ -20,13 +28,26 @@ export default function SignupPage() {
     });
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
-    console.log(form);
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
-    // TODO:
-    // Connect Supabase Signup
+    setSubmitting(true);
+    try {
+      await signup(form.fullName, form.email, form.password);
+      router.push("/dashboard");
+    } catch (err) {
+      setError(
+        err instanceof ApiError ? err.message : "Unable to create account."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -48,6 +69,7 @@ export default function SignupPage() {
             placeholder="Full Name"
             value={form.fullName}
             onChange={handleChange}
+            required
           />
 
           <Input
@@ -56,6 +78,7 @@ export default function SignupPage() {
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
+            required
           />
 
           <Input
@@ -64,6 +87,7 @@ export default function SignupPage() {
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
+            required
           />
 
           <Input
@@ -72,10 +96,17 @@ export default function SignupPage() {
             placeholder="Confirm Password"
             value={form.confirmPassword}
             onChange={handleChange}
+            required
           />
 
-          <Button type="submit" className="w-full">
-            Sign Up
+          {error && (
+            <p className="text-sm text-red-600" role="alert">
+              {error}
+            </p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={submitting}>
+            {submitting ? "Creating account..." : "Sign Up"}
           </Button>
 
         </form>

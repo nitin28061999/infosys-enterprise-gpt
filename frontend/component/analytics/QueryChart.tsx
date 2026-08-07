@@ -1,14 +1,11 @@
-﻿export default function QueryChart() {
-  const data = [
-    { month: "Jan", value: 120 },
-    { month: "Feb", value: 210 },
-    { month: "Mar", value: 180 },
-    { month: "Apr", value: 260 },
-    { month: "May", value: 320 },
-    { month: "Jun", value: 410 },
-  ];
+import type { MonthlyPoint } from "@/lib/api";
 
-  const max = Math.max(...data.map((d) => d.value));
+interface QueryChartProps {
+  data: MonthlyPoint[];
+}
+
+export default function QueryChart({ data }: QueryChartProps) {
+  const max = Math.max(...data.map((d) => d.value), 1);
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -19,14 +16,9 @@
           <div key={item.month} className="flex flex-1 flex-col items-center">
             <div
               className="w-full rounded-t-lg bg-blue-600 transition-all"
-              style={{
-                height: `${(item.value / max) * 180}px`,
-              }}
+              style={{ height: `${(item.value / max) * 180}px` }}
             />
-
-            <span className="mt-2 text-sm">
-              {item.month}
-            </span>
+            <span className="mt-2 text-sm">{item.month}</span>
           </div>
         ))}
       </div>

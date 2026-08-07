@@ -1,25 +1,23 @@
-﻿const logs = [
-  {
-    id: 1,
-    user: "Admin",
-    action: "Uploaded HR Policy.pdf",
-    time: "2 mins ago",
-  },
-  {
-    id: 2,
-    user: "Knowledge Owner",
-    action: "Updated Engineering Guide",
-    time: "15 mins ago",
-  },
-  {
-    id: 3,
-    user: "Employee",
-    action: "Asked AI about Leave Policy",
-    time: "30 mins ago",
-  },
-];
+"use client";
+
+import { useEffect, useState } from "react";
+import { adminApi, ApiError, type AuditEntry } from "@/lib/api";
 
 export default function AuditTable() {
+  const [logs, setLogs] = useState<AuditEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    adminApi
+      .getAuditLog()
+      .then(setLogs)
+      .catch((err) =>
+        setError(err instanceof ApiError ? err.message : "Failed to load audit log.")
+      )
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
       <table className="w-full">
@@ -32,11 +30,32 @@ export default function AuditTable() {
         </thead>
 
         <tbody>
+          {loading && (
+            <tr>
+              <td className="px-6 py-4 text-slate-400" colSpan={3}>
+                Loading audit log...
+              </td>
+            </tr>
+          )}
+
+          {error && (
+            <tr>
+              <td className="px-6 py-4 text-red-600" colSpan={3} role="alert">
+                {error}
+              </td>
+            </tr>
+          )}
+
+          {!loading && !error && logs.length === 0 && (
+            <tr>
+              <td className="px-6 py-4 text-slate-400" colSpan={3}>
+                No audit entries yet.
+              </td>
+            </tr>
+          )}
+
           {logs.map((log) => (
-            <tr
-              key={log.id}
-              className="border-t hover:bg-slate-50"
-            >
+            <tr key={log.id} className="border-t hover:bg-slate-50">
               <td className="px-6 py-4">{log.user}</td>
               <td className="px-6 py-4">{log.action}</td>
               <td className="px-6 py-4">{log.time}</td>
