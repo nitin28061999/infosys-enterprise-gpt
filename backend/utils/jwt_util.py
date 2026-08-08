@@ -5,8 +5,7 @@ from config.env_config import envConfig
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException
 
-oauth2_scheme = OAuth2PasswordBearer( tokenUrl="/api/auth/signin" )
-
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
 def create_access_token(data: dict) -> str:
     payload = data.copy()
