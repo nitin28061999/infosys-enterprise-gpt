@@ -1,58 +1,23 @@
-﻿"use client";
+"use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import Input from "@/component/ui/Input";
-import Button from "@/component/ui/Button";
 
+// No password-reset endpoint exists on the backend yet (checked
+// backend/src/auth/auth_router.py directly). Saying so plainly instead of
+// showing a form that would silently fail.
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
-
-  const handleReset = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    console.log(email);
-
-    // TODO:
-    // Connect Supabase Password Reset
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
-      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
-
-        <h1 className="mb-2 text-center text-3xl font-bold">
-          Forgot Password
-        </h1>
-
-        <p className="mb-8 text-center text-slate-500">
-          Enter your email to receive a password reset link.
+      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg text-center">
+        <h1 className="mb-4 text-3xl font-bold">Forgot Password</h1>
+        <p className="text-slate-600">
+          Password reset isn&apos;t available yet — this needs a backend
+          endpoint that hasn&apos;t been built. Contact your administrator
+          directly to reset your password for now.
         </p>
-
-        <form onSubmit={handleReset} className="space-y-5">
-
-          <Input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <Button type="submit" className="w-full">
-            Send Reset Link
-          </Button>
-
-        </form>
-
-        <p className="mt-6 text-center text-sm">
-          <Link
-            href="/login"
-            className="font-semibold text-blue-600"
-          >
-            Back to Login
-          </Link>
-        </p>
-
+        <Link href="/login" className="mt-6 inline-block font-semibold text-blue-600">
+          Back to Login
+        </Link>
       </div>
     </div>
   );

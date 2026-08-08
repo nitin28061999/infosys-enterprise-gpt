@@ -1,29 +1,23 @@
-﻿export default function ProfileCard() {
+"use client";
+
+import { useAuth } from "@/lib/auth-context";
+
+export default function ProfileCard() {
+  const { user } = useAuth();
   return (
     <div className="rounded-xl bg-white p-6 shadow">
-
       <div className="flex flex-col items-center">
-
         <img
-          src="https://ui-avatars.com/api/?name=Admin"
+          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}`}
           alt="Profile"
           className="h-24 w-24 rounded-full"
         />
-
-        <h2 className="mt-4 text-2xl font-bold">
-          Admin User
-        </h2>
-
-        <p className="text-gray-500">
-          admin@enterprisegpt.com
-        </p>
-
-        <span className="mt-3 rounded-full bg-blue-100 px-4 py-1 text-blue-700">
-          Administrator
-        </span>
-
+        <h2 className="mt-4 text-2xl font-bold">{user?.name ?? "—"}</h2>
+        <p className="text-gray-500">{user?.email ?? "—"}</p>
+        {user?.role && (
+          <span className="mt-3 rounded-full bg-blue-100 px-4 py-1 text-blue-700">{user.role}</span>
+        )}
       </div>
-
     </div>
   );
 }

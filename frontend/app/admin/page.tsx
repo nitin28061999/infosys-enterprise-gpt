@@ -1,9 +1,80 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useEnterpriseData } from "@/lib/enterprise-store";
+import { useAuth } from "@/lib/auth-context";
+import { adminApi, ApiError, type UserResponse } from "@/lib/api";
 
 export default function AdminPage() {
-  const { data } = useEnterpriseData();
-  return <main className="min-h-screen bg-slate-100 p-6 md:p-10"><div className="mx-auto max-w-6xl"><header className="flex items-start justify-between gap-4"><div><h1 className="text-3xl font-bold">Admin</h1><p className="mt-1 text-slate-600">Workspace administration data for the current browser session.</p></div><Link href="/dashboard" className="text-sm font-medium text-blue-700 hover:underline">Dashboard</Link></header><section className="mt-8 grid gap-6 lg:grid-cols-2"><div className="rounded-xl bg-white p-6 shadow-sm"><h2 className="text-xl font-semibold">Current session</h2>{data.user ? <dl className="mt-4 space-y-3"><div><dt className="text-sm text-slate-500">Name</dt><dd>{data.user.name}</dd></div><div><dt className="text-sm text-slate-500">Email</dt><dd>{data.user.email}</dd></div></dl> : <p className="mt-4 text-slate-600">No user has signed in locally.</p>}</div><div className="rounded-xl bg-white p-6 shadow-sm"><h2 className="text-xl font-semibold">Knowledge workspace</h2><p className="mt-4 text-slate-700"><span className="font-semibold">{data.documents.length}</span> documents are registered in this browser.</p><Link href="/upload" className="mt-4 inline-block text-sm font-medium text-blue-700 hover:underline">Manage documents →</Link></div></section><section className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-6 text-amber-900"><h2 className="font-semibold">Backend integration required</h2><p className="mt-2">User roles, connectors, audit logs, and permissions cannot be made real in a frontend-only app. This page intentionally does not show fabricated users, connector states, or audit events.</p></section></div></main>;
+  const { user, loading: authLoading } = useAuth();
+  const [users, setUsers] = useState<UserResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const isAdmin = user?.role === "ADMIN";
+
+  useEffect(() => {
+    if (!isAdmin) { setLoading(false); return; }
+    adminApi.getUsers()
+      .then(setUsers)
+      .catch((err) => setError(err instanceof ApiError ? err.message : "Failed to load users."))
+      .finally(() => setLoading(false));
+  }, [isAdmin]);
+
+  if (authLoading) return null;
+
+  return (
+    <main className="min-h-screen bg-slate-100 p-6 md:p-10">
+      <div className="mx-auto max-w-6xl">
+        <header className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">Admin</h1>
+            <p className="mt-1 text-slate-600">Manage users in your enterprise workspace.</p>
+          </div>
+          <Link href="/dashboard" className="text-sm font-medium text-blue-700 hover:underline">Dashboard</Link>
+        </header>
+
+        {!isAdmin ? (
+          <div className="mt-8 rounded-xl bg-white p-8 text-center shadow-sm">
+            <p className="text-slate-600">
+              This page is restricted to Admins. Your account role is{" "}
+              <span className="font-semibold">{user?.role ?? "unknown"}</span>.
+            </p>
+          </div>
+        ) : (
+          <section className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold">Users</h2>
+
+            {error && <p className="mt-4 text-sm text-red-600" role="alert">{error}</p>}
+            {loading && <p className="mt-4 text-sm text-slate-400">Loading users...</p>}
+
+            {!loading && !error && (
+              <table className="mt-4 w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left text-slate-500">
+                    <th className="py-2">Name</th>
+                    <th className="py-2">Email</th>
+                    <th className="py-2">Department</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((u) => (
+                    <tr key={u.id} className="border-b">
+                      <td className="py-2">{u.name}</td>
+                      <td className="py-2">{u.email}</td>
+                      <td className="py-2">{u.department}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+
+            <p className="mt-6 text-sm text-slate-400">
+              Roles, connectors, and audit-log views aren&apos;t available yet —
+              the backend doesn&apos;t expose those endpoints.
+            </p>
+          </section>
+        )}
+      </div>
+    </main>
+  );
 }
