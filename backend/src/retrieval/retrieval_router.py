@@ -16,7 +16,7 @@ def retrieve_info(data: QueryRequest, service: QueryService = Depends(), curr_us
     # return service.retrieveInfo(data.question, curr_user)
 
     enterprise = EnterpriseGroundedEngine()
-    return enterprise.generate_response(data.question, curr_user["department"], curr_user['id'])
+    return enterprise.generate_response(data.question, curr_user["department"], curr_user['id'], curr_user['role'])
 
 
 

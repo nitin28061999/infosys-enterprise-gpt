@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, Depends, File
+from fastapi import APIRouter, UploadFile, Depends, File, Form
 from .document_schema import DocumentRequest, ListResponse , ApiResponse, UpdateDocument, IngestionResponse
 from .document_service import DocumentService
 from utils.rbac_util import admin_only, knowledge_owner_only
@@ -9,11 +9,13 @@ router = APIRouter(prefix='/document', tags=['Documents'], dependencies=[Depends
 @router.post('/', status_code=201, response_model=ApiResponse)
 async def upload(
     data: DocumentRequest = Depends(DocumentRequest.as_form),
+    department= Form(...),
     file: UploadFile = File(...),
-    service: DocumentService = Depends()
+    service: DocumentService = Depends(),
+    curr_user: dict = Depends(knowledge_owner_only)
     ):
 
-    document = await service.upload_file(data, file)
+    document = await service.upload_file(data, file, curr_user["id"], curr_user['department'], department, curr_user['role'])
     return {"success": True, "message": "File uploaded successfully", "data": document}
 
 

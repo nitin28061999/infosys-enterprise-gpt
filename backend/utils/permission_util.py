@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from src.users.user_model import Role
 
 
 def permission_context_builder(curr_user:dict)->dict:
@@ -12,73 +13,89 @@ def permission_context_builder(curr_user:dict)->dict:
         detail="Invalid User authentication data",
         )
 
-    if user_role=="admin":
+    if user_role== Role.ADMIN:
         return {
         "user_id":user_id,
         "user_role": user_role,
         "user_department":user_department,
         "can_access-all_documemnt":True,
         "allowed_departments": [],
-        "allowed_cofidentiality":[
-            "public",
-            "internal",
-            "confidential"
-            "retricted"
-        ],
-        "allowed_access_scope":[
-            "all",
-            "department",
-            "owner"
-        ]
+        "allowed_cofidentiality":[ "PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED" ],
+        "allowed_access_scope":[ "ALL", "DEPARTMENT", "OWNER" ]
         }
 
-    if user_role=="knowledge_owner":
+    if user_role==Role.KNOWLEDGE_OWNER:
             return {
-            "user_id":user_id,
-            "role": user_role,
-            "department":user_department,
-            "can_access-all_documemnt":False,
-            "allowed_departments":[user_department],
-            "allowed_cofidentiality":[
-                "public",
-                "internal",
-                "confidential"
+            "user_id": user_id,
+            "user_role": user_role,
+            "user_department": user_department,
+            "can_access_all_documents": False,
+            "allowed_confidentiality": [
+                "PUBLIC",
+                "INTERNAL",
+                "CONFIDENTIAL"
             ],
-            "allowed_access_scope":[
-                "all",
-                "department",
-                "owner"
+            "allowed_access_scope": [
+                "ALL",
+                "DEPARTMENT",
+                "OWNER"
             ]
             }
 
-    if user_role=="employee":
+    if user_role== Role.EMPLOYEE:
          return{
 
-              "user_id":user_id,
-              "role":user_role,
-              "department":user_department,
-              "can_access_all-document":False,
-              "allowed_departments":[user_department],
-              "allowed_cofidentiality":[
-                   "public",
-                   "department"
-              ],
-              "allowed_access_scope":[
-                   "all",
-                   "department"
-              ]
+            "user_id": user_id,
+            "user_role": user_role,
+            "user_department": user_department,
+            "can_access_all_documents": False,
+            "allowed_confidentiality": [
+                "PUBLIC",
+                "INTERNAL"
+            ],
+            "allowed_access_scope": [
+                "ALL",
+                "DEPARTMENT"
+            ]
          }
 
     raise HTTPException(
          status_code=403,
-         details="unsupported User role",
+         detail="unsupported User role",
     )
 
-if __name__=='__main__':
-     curr_user = {
-          "id": "001",
-          "role": "employee",
-          "department": "IT"
-     }
-     output = permission_context_builder(curr_user)
-     print(output)
+
+def can_access_document(document_metadata: dict, permission_context: dict):
+
+  
+    # admin
+     if permission_context["can_access_all_documents"]:
+          return True
+
+    # Check confidentiality
+     confidentiality  = document_metadata.get("confidentiality")
+     if confidentiality not in permission_context["allowed_confidentiality"]:
+          return False
+
+     # Check access scope
+     access_scope = document_metadata.get("access_scope")
+
+        #  ALL
+     if access_scope == "ALL":
+          return True
+
+        # DEPARTMENT
+     if access_scope == "DEPARTMENT":
+          document_department  = document_metadata.get('department')
+
+          return document_department == permission_context["user_department"]
+
+        # OWNER
+     if access_scope == "OWNER":
+          document_owner_id = document_metadata.get("owner_id")
+          return document_owner_id == permission_context["user_id"]
+
+
+
+     return False
+    

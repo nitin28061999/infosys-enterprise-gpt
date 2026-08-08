@@ -1,8 +1,9 @@
 from config.db_config import Base
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Integer, DateTime, func, Enum as sqlEnum, Boolean
+from sqlalchemy import String, Integer, DateTime, func, Enum as sqlEnum, Boolean, ForeignKey
 from enum import Enum
 from datetime import datetime
+import src.users.user_model 
 
 
 
@@ -41,7 +42,7 @@ class Document(Base):
     id : Mapped[int] = mapped_column(primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     department : Mapped[str] = mapped_column(String(255))
-    owner : Mapped[str] = mapped_column(String(255))
+    owner_id : Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
     file_path : Mapped[str] = mapped_column(String(500))
     status: Mapped[DocumentStatus] = mapped_column(sqlEnum(DocumentStatus), default=DocumentStatus.UPLOADED, nullable=False)
     document_type: Mapped[DocumentType] = mapped_column(sqlEnum(DocumentType), nullable=False)
