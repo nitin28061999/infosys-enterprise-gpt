@@ -131,7 +131,7 @@ class EnterprisePDFIndexer:
                         "document_id": document.id,
                         "title": document.title,
                         "department": document.department,
-                        "owner": document.owner,
+                        "owner_id": document.owner_id,
                         "access_scope": document.access_scope,
                         "confidentiality": document.confidentiality,
                         "page_number": page_num,

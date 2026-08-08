@@ -12,7 +12,7 @@ import chromadb
 from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from config.env_config import envConfig
-
+from src.users.user_model import Role
 
 
 class DocumentService:
@@ -25,14 +25,24 @@ class DocumentService:
                             google_api_key=envConfig.GEMINI_API_KEY
                         )
 
-    async def upload_file(self, data, file: UploadFile):
-        
+
+# ADMIN → can upload documents for any department
+# KNOWLEDGE_OWNER → can upload documents only for their own department
+# EMPLOYEE → cannot upload
+
+    async def upload_file(self, data, file: UploadFile, owner_id: int, departmentRequired: str, departmentAsked: str, role: str):
+
+        if role != Role.ADMIN:
+            if departmentRequired != departmentAsked:
+                raise HTTPException(status_code=403, detail="You are not authorized to upload another department document")
+
+               
         file_path = await supabase_upload(file)
 
         document_data = data.model_dump()
         document_data["file_path"] = file_path
 
-        document = Document(**document_data)
+        document = Document(**document_data, department=departmentAsked, owner_id=owner_id)
         self.db.add(document)
         self.db.commit()
         self.db.refresh(document)
