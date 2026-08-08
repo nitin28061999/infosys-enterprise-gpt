@@ -83,7 +83,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center text-sm">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="font-semibold text-blue-600 hover:underline">
+          <Link href="/auth/Signup" className="font-semibold text-blue-600 hover:underline">
             Sign Up
           </Link>
         </div>
@@ -95,3 +95,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
