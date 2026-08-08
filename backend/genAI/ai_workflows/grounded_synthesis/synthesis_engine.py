@@ -14,6 +14,7 @@ from src.audit.audit_service import AuditService
 import time
 from config.logger_config import logger
 from config.db_config import SessionLocal
+from utils.permission_util import permission_context_builder, can_access_document
 
 
 
@@ -106,7 +107,8 @@ class EnterpriseGroundedEngine:
         self,
         query: str,
         department: str,
-        id: int
+        id: int,
+        role: str
     ) -> Dict[str, Any]:
 
 
@@ -131,14 +133,12 @@ class EnterpriseGroundedEngine:
                     "recommended_action": "Type a specific question regarding internal policies or SOPs."
                 }
 
-            # 2. Search only within the user's department
+            # 2. Search 
             results_with_scores = self.vector_db.similarity_search_with_score(
                 query=query,
-                k=5,
-                filter={
-                    "department": department
-                }
+                k=20,
             )
+
 
             # 3. No documents found for this department
             if not results_with_scores:
@@ -150,15 +150,51 @@ class EnterpriseGroundedEngine:
                     "recommended_action": "Please contact your administrator if you believe documents should exist for this department."
                 }
 
+
+
+            # permission filtering
+            curr_user = {"id": id, "role": role, "department": department}
+            permission_context = permission_context_builder(curr_user)
+            authorized_results = []
+
+            for doc, score in results_with_scores:
+
+                allowed = can_access_document(doc.metadata, permission_context)
+
+                print(
+                        f"DOCUMENT={doc.metadata.get('title')} "
+                        f"ID={doc.metadata.get('document_id')} "
+                        f"DEPARTMENT={doc.metadata.get('department')} "
+                        f"SCORE={score} "
+                        f"ALLOWED={allowed}"
+                    )
+
+                if allowed:
+                    authorized_results.append((doc, score))
+
+            # 5. No authorized documents
+            if not authorized_results:
+                staus = AuditStatus.NO_ANSWER
+                return {
+                    "answer": "I couldn't find any documents that you " "are authorized to access." ,
+                    "confidence_score": 0.0,
+                    "citations": [],
+                    "recommended_action": (
+                        "Please contact your administrator if you "
+                        "believe you should have access."
+                    )
+    }
+
+
+
             # 4. Filter by similarity score
-            valid_docs = [
-                doc
-                for doc, score in results_with_scores
-                if score <= 0.85
-            ]
+            valid_docs = [ doc for doc, score in authorized_results if score <= 0.85]
+
+            print("******** valid docs ******************")
+            print(valid_docs)
 
             if not valid_docs:
-                valid_docs = [results_with_scores[0][0]]
+                valid_docs = [authorized_results[0][0]]
 
             # 5. Build context
             context_str = CitationContextBuilder.build_context_block(valid_docs)
@@ -180,6 +216,15 @@ class EnterpriseGroundedEngine:
                             Question:
                             {query}
                         """
+
+            # print("\n========== CONTEXT ==========")
+            # print(context_str)
+
+            # print("\n========== QUERY ==========")
+            # print(query)
+
+            # print("\n========== PROMPT ==========")
+            # print(system_prompt)
 
             # 7. Generate answer
             response = self.llm.invoke(system_prompt)
@@ -218,7 +263,7 @@ class EnterpriseGroundedEngine:
 
                         "department": meta.get("department"),
 
-                        "owner": meta.get("owner"),
+                        "owner": meta.get("owner_id"),
 
                         "page_number": meta.get("page_number"),
 
