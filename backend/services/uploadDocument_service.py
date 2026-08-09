@@ -1,4 +1,4 @@
-from fastapi import UploadFile, HTTPException
+from fastapi import UploadFile, HTTPException # pyright: ignore[reportMissingImports]
 from config.env_config import envConfig
 from config.supabase_config import supabase
 from config.logger_config import logger
@@ -9,27 +9,26 @@ import uuid
 async def supabase_upload(file: UploadFile) -> str:
 
         try:
-              extension = file.filename.rsplit(".")[-1].lower()
+                extension = file.filename.rsplit(".")[-1].lower()
 
-              if extension not  in ["pdf", "docx", "txt"]:
-                     raise HTTPException(status_code=400, detail="Only PDF, DOCX and TXT files are allowed.")
+                if extension not  in ["pdf", "docx", "txt"]:
+                       raise HTTPException(status_code=400, detail="Only PDF, DOCX and TXT files are allowed.")
 
-              filename = f"{uuid.uuid4()}.{extension}"
+                filename = f"{uuid.uuid4()}.{extension}"
 
-              path = f"documents/{filename}"
+                path = f"documents/{filename}"
 
-              file_bytes = await file.read()
+                file_bytes = await file.read()
 
-              response = supabase.storage.from_(envConfig.SUPABASE_BUCKET ).upload(path=path,file=file_bytes,file_options={"content-type": file.content_type})
+                response = supabase.storage.from_(envConfig.SUPABASE_BUCKET ).upload(path=path,file=file_bytes,file_options={"content-type": file.content_type})
 
-              logger.info("File uploaded successfully")
-              return path
+                logger.info("File uploaded successfully")
+                return path
 
         except HTTPException:
             raise
         except Exception as e:
-            logger.exception(f"Supabase upload failed: {e}")
-            raise HTTPException(
-                status_code=500,
-                detail=f"Failed to upload file: {str(e)}"
-    )
+                logger.exception(f"Supabase upload failed: {e}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to upload file: {str(e)}") from e
