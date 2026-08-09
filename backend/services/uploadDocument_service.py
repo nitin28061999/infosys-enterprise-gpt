@@ -28,7 +28,7 @@ async def supabase_upload(file: UploadFile) -> str:
         except HTTPException:
             raise
         except Exception as e:
-            logger.exception("Supabase upload failed")
+            logger.exception(f"Supabase upload failed: {e}")
             raise HTTPException(
                 status_code=500,
                 detail="Failed to upload file."
