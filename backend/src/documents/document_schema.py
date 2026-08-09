@@ -10,7 +10,7 @@ class DocumentRequest(BaseModel):
     document_type: DocumentType
     confidentiality: Confidentiality
     access_scope: AccessScope
-    source_system: bool | None = None
+    source_system: str | None = None
 
     @classmethod
     def as_form(
@@ -19,7 +19,7 @@ class DocumentRequest(BaseModel):
         document_type: DocumentType = Form(...),
         confidentiality: Confidentiality = Form(...),
         access_scope: AccessScope = Form(...),
-        source_system: bool | None = Form(None),
+        source_system: str | None = Form(None),
     ) -> "DocumentRequest":
         return cls(
             title=title,
@@ -57,7 +57,7 @@ class UpdateDocument(BaseModel):
     document_type: DocumentType | None = None
     confidentiality: Confidentiality | None = None
     access_scope: AccessScope | None = None
-    source_system: bool | None = None
+    source_system: str | None = None
 
     @classmethod
     def as_form(
@@ -66,7 +66,7 @@ class UpdateDocument(BaseModel):
         document_type: DocumentType | None = Form(None),
         confidentiality: Confidentiality | None = Form(None),
         access_scope: AccessScope | None = Form(None),
-        source_system: bool | None = Form(None),
+        source_system: str | None = Form(None),
     ):
         return cls(
             title=title,
