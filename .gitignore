@@ -2,4 +2,6 @@ node_modules/
 frontend/.env.local
 frontend/.next/
 frontend/next-env.d.ts
-frontend/next-env.d.ts
+.env
+.env.local
+.env.*.local

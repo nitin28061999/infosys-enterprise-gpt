@@ -188,10 +188,11 @@ class EnterpriseGroundedEngine:
 
 
             # 4. Filter by similarity score
-            valid_docs = [ doc for doc, score in authorized_results if score <= 0.85]
+            valid_docs = [ doc for doc, score in authorized_results]
 
             print("******** valid docs ******************")
-            print(valid_docs)
+            for doc in valid_docs:
+                print(doc.metadata)
 
             if not valid_docs:
                 valid_docs = [authorized_results[0][0]]

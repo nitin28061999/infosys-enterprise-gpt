@@ -1,4 +1,4 @@
-from fastapi import UploadFile, HTTPException # pyright: ignore[reportMissingImports]
+from fastapi import UploadFile, HTTPException
 from config.env_config import envConfig
 from config.supabase_config import supabase
 from config.logger_config import logger
@@ -9,6 +9,9 @@ import uuid
 async def supabase_upload(file: UploadFile) -> str:
 
         try:
+                if not file.filename:
+                        raise HTTPException(status_code=400, detail="Uploaded file has no filename.")
+
                 extension = file.filename.rsplit(".")[-1].lower()
 
                 if extension not  in ["pdf", "docx", "txt"]:
@@ -20,7 +23,9 @@ async def supabase_upload(file: UploadFile) -> str:
 
                 file_bytes = await file.read()
 
-                response = supabase.storage.from_(envConfig.SUPABASE_BUCKET ).upload(path=path,file=file_bytes,file_options={"content-type": file.content_type})
+                content_type = file.content_type or "application/octet-stream"
+
+                response = supabase.storage.from_(envConfig.SUPABASE_BUCKET ).upload(path=path,file=file_bytes,file_options={"content-type": content_type})
 
                 logger.info("File uploaded successfully")
                 return path

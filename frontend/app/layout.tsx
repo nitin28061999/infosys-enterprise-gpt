@@ -1,16 +1,19 @@
-import type { ReactNode } from 'react';
-import { AuthProvider } from "@/lib/auth-context";
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Enterprise GPT",
+  description: "Enterprise AI Knowledge Assistant",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: ReactNode;
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
-      <body>
-        <AuthProvider>{children}</AuthProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

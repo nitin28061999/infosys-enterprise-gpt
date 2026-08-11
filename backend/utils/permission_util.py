@@ -18,9 +18,9 @@ def permission_context_builder(curr_user:dict)->dict:
         "user_id":user_id,
         "user_role": user_role,
         "user_department":user_department,
-        "can_access-all_documemnt":True,
+        "can_access_all_documents":True,
         "allowed_departments": [],
-        "allowed_cofidentiality":[ "PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED" ],
+        "allowed_confidentiality":[ "PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED" ],
         "allowed_access_scope":[ "ALL", "DEPARTMENT", "OWNER" ]
         }
 
