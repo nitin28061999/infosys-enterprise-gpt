@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 
-app.get("/health", status_code=200)
+@app.get("/health", status_code=200)
 def server_health():
     return {"server is in good health"}
 
