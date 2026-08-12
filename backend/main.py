@@ -6,6 +6,9 @@ from routes.main_route import router as main_router
 from utils.exception_handler import register_exception_handlers
 
 app = FastAPI()
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
 
 allow_origins = [
     "http://localhost:3000",
