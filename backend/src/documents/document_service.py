@@ -89,6 +89,21 @@ class DocumentService:
 
         # Refresh so document.id is available
         self.db.refresh(document)
+        try:
+            document.status = DocumentStatus.QUEUED
+            self.db.commit()
+
+
+            await self.arq_service.enqueue_index_job(document.id)
+
+
+            self.db.refresh(document)
+
+
+        except Exception:
+            document.status = DocumentStatus.FAILED
+            self.db.commit()
+            raise
 
         return document
 
@@ -306,6 +321,3 @@ class DocumentService:
         data = vector_store.get()
 
         return data
-        
-
- 
