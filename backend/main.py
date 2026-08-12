@@ -7,11 +7,18 @@ from utils.exception_handler import register_exception_handlers
 
 app = FastAPI()
 
-# Do not create database tables during startup.
-# This prevents Render from timing out before the API binds to $PORT.
-
+allow_origins = [
+    "http://localhost:3000",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins # pyright: ignore[reportUndefinedVariable]
+    allow_origins=allow_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+app.include_router(main_router)
+
+register_exception_handlers(app)
