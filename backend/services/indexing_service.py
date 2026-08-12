@@ -1,37 +1,67 @@
+import os
 from io import BytesIO
+
+import chromadb
 from pypdf import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from sentence_transformers import SentenceTransformer
-import chromadb
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 
-
-
+# ============================================================
+# PDF TEXT EXTRACTION
+# ============================================================
 
 def create_texts(filebyte):
+    """
+    Extract text from every page of a PDF.
+
+    Args:
+        filebyte: PDF file as bytes
+
+    Returns:
+        List of dictionaries containing page number and text.
+    """
 
     reader = PdfReader(BytesIO(filebyte))
-    text = ""
+
     pages = []
 
     for page_no, page in enumerate(reader.pages, start=1):
+        text = page.extract_text() or ""
+
         pages.append({
             "page_number": page_no,
-            "text": page.extract_text() + "\n"
-
+            "text": text + "\n"
         })
 
     return pages
 
 
-def create_chunks(pages):
+# ============================================================
+# TEXT CHUNKING
+# ============================================================
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+def create_chunks(pages):
+    """
+    Split PDF pages into smaller chunks for embedding.
+    """
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200
+    )
 
     chunks = []
 
     for page in pages:
-        docs = splitter.create_documents([page["text"]])
+
+        page_text = page.get("text", "")
+
+        if not page_text.strip():
+            continue
+
+        docs = splitter.create_documents([page_text])
+
         for doc in docs:
             doc.metadata["page_number"] = page["page_number"]
             chunks.append(doc)
@@ -39,63 +69,228 @@ def create_chunks(pages):
     return chunks
 
 
+# ============================================================
+# EMBEDDING SERVICE
+# ============================================================
 
 class EmbeddingService:
+
     def __init__(self):
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
 
-    def create_embedding(self, chunks):
-
-        texts = [chunk.page_content for chunk in chunks]
-
-        embeddings = self.model.encode(texts, convert_to_numpy=True)
-        return embeddings
-
-    def create_query_embedding(self, texts: list[str]):
-        return self.model.encode(
-            texts,
-            convert_to_numpy=True
+        # Support both names so existing local configuration
+        # and Render configuration can work.
+        api_key = (
+            os.getenv("GEMINI_API_KEY")
+            or os.getenv("GOOGLE_API_KEY")
         )
 
+        if not api_key:
+            raise ValueError(
+                "GEMINI_API_KEY or GOOGLE_API_KEY is not configured."
+            )
+
+        self.embeddings = GoogleGenerativeAIEmbeddings(
+            model="gemini-embedding-2-preview",
+            google_api_key=api_key
+        )
+
+    def create_embedding(self, chunks):
+        """
+        Create embeddings for document chunks.
+        """
+
+        if not chunks:
+            return []
+
+        texts = [
+            chunk.page_content
+            for chunk in chunks
+            if chunk.page_content and chunk.page_content.strip()
+        ]
+
+        if not texts:
+            return []
+
+        embeddings = self.embeddings.embed_documents(texts)
+
+        return embeddings
+
+    def create_query_embedding(self, text):
+        """
+        Create embedding for a user query.
+        """
+
+        if not text or not text.strip():
+            return []
+
+        return self.embeddings.embed_query(text)
 
 
+# ============================================================
+# VECTOR DATABASE SERVICE
+# ============================================================
 
 class VectorService:
+
     def __init__(self):
-            self.client = chromadb.PersistentClient(path="./chroma_db")
-            self.collection = self.client.get_or_create_collection(name="documents")
 
+        # Keep Chroma database inside the backend directory.
+        base_dir = os.path.dirname(
+            os.path.dirname(
+                os.path.abspath(__file__)
+            )
+        )
 
-    def store_vectorDb(self, document_id, chunks, embeddings, title: str, department: str, owner: str, access_scope: str, confidentiality: str):    
+        chroma_path = os.path.join(
+            base_dir,
+            "chroma_db"
+        )
+
+        os.makedirs(chroma_path, exist_ok=True)
+
+        self.client = chromadb.PersistentClient(
+            path=chroma_path
+        )
+
+        self.collection = (
+            self.client.get_or_create_collection(
+                name="documents"
+            )
+        )
+
+    def store_vectorDb(
+        self,
+        document_id,
+        chunks,
+        embeddings,
+        title: str,
+        department: str,
+        owner: str,
+        access_scope: str,
+        confidentiality: str
+    ):
+        """
+        Store document chunks, embeddings and metadata
+        inside ChromaDB.
+        """
+
+        if not chunks:
+            print("No chunks available to store.")
+            return
+
+        if not embeddings:
+            print("No embeddings available to store.")
+            return
 
         ids = []
         documents = []
         metadatas = []
 
         for index, chunk in enumerate(chunks):
-            ids.append(f"{document_id}_{index}")
-            documents.append(chunk.page_content)
+
+            ids.append(
+                f"{document_id}_{index}"
+            )
+
+            documents.append(
+                chunk.page_content
+            )
+
             metadatas.append({
-                "document_id": document_id,
-                "document_name": title,
-                "department": department,
-                "owner": owner,
-                "access_scope": access_scope,
-                "confidentiality": confidentiality,
-                "page_number": chunk.metadata.get("page_number"),
-                "chunk_index": index,
-                # "section": chunk.metadata.get("section"),    # Optional (future use)
-                # "score": 0.0          # Filled during retrieval
+                "document_id": str(document_id),
+                "document_name": str(title),
+                "department": str(department),
+                "owner": str(owner),
+                "access_scope": str(access_scope),
+                "confidentiality": str(confidentiality),
+                "page_number": int(
+                    chunk.metadata.get(
+                        "page_number",
+                        0
+                    )
+                ),
+                "chunk_index": int(index)
             })
 
-
-        for key, value in metadatas[0].items():
-            print(key, value, type(value))
+        # Make sure number of embeddings matches
+        # number of documents.
+        if len(embeddings) != len(documents):
+            raise ValueError(
+                f"Embedding count ({len(embeddings)}) "
+                f"does not match chunk count ({len(documents)})."
+            )
 
         self.collection.add(
-                ids=ids,
-                documents=documents,
-                embeddings=embeddings.tolist(),
-                metadatas=metadatas,)
-        print(self.collection.get(  ids=[ids[0]], include=["metadatas"])
-)
+            ids=ids,
+            documents=documents,
+            embeddings=embeddings,
+            metadatas=metadatas
+        )
+
+        print(
+            f"Successfully stored {len(ids)} chunks "
+            f"for document {document_id}"
+        )
+
+    def search(
+        self,
+        query_embedding,
+        n_results=5,
+        where=None
+    ):
+        """
+        Search ChromaDB using an embedding.
+        """
+
+        if not query_embedding:
+            return {
+                "ids": [[]],
+                "documents": [[]],
+                "metadatas": [[]],
+                "distances": [[]]
+            }
+
+        query_kwargs = {
+            "query_embeddings": [query_embedding],
+            "n_results": n_results
+        }
+
+        if where:
+            query_kwargs["where"] = where
+
+        return self.collection.query(
+            **query_kwargs
+        )
+
+    def delete_document(self, document_id):
+        """
+        Delete all chunks belonging to a document.
+        """
+
+        self.collection.delete(
+            where={
+                "document_id": str(document_id)
+            }
+        )
+
+        print(
+            f"Deleted document: {document_id}"
+        )
+
+    def get_document(self, document_id):
+        """
+        Get all stored chunks belonging to a document.
+        """
+
+        return self.collection.get(
+            where={
+                "document_id": str(document_id)
+            }
+        )
+
+    def count(self):
+        """
+        Return total number of vectors in ChromaDB.
+        """
+
+        return self.collection.count()
