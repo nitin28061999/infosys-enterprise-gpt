@@ -2,6 +2,9 @@
     "python-envs.defaultEnvManager": "ms-python.python:system",
     "cSpell.words": [
         "dbcz",
+        "filebyte",
+        "genai",
+        "metadatas",
         "Pageheader",
         "pooler",
         "sourcery",
