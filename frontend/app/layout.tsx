@@ -3,22 +3,22 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
-  title: "Enterprise GPT",
-  description: "Enterprise AI Knowledge Assistant",
+  title: "Enterprise GPT",
+  description: "Enterprise AI Knowledge Assistant",
 };
 
 export default function RootLayout({
-  children,
+  children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-      </body>
-    </html>
-  );
+  return (
+    <html lang="en">
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
+    </html>
+  );
 }

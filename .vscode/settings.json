@@ -1,8 +1,9 @@
 {
     "python-envs.defaultEnvManager": "ms-python.python:system",
     "cSpell.words": [
-        "genai",
+        "dbcz",
         "Pageheader",
+        "pooler",
         "sourcery",
         "Supabase"
     ]
