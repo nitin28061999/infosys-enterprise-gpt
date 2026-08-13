@@ -12,6 +12,8 @@ def health_check():
 
 allow_origins = [
     "http://localhost:3000",
+    "https://infosys-enterprise-gpt-eight.vercel.app",
+    "https://infosys-enterprise-q97k92bnj-nitin28061999s-projects.vercel.app",
 ]
 
 app.add_middleware(
