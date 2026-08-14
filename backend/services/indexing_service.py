@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from io import BytesIO
 from typing import Any, Dict, List, Optional, Union
 

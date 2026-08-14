@@ -1,12 +1,10 @@
-from fastapi import Depends, HTTPException, UploadFile # type: ignore
+from fastapi import Depends, HTTPException, UploadFile  # type: ignore
 from sqlalchemy.orm import Session
 
 from config.db_config import get_db
 from config.env_config import envConfig
-from config.arq_config import ArqService
 
 from services.uploadDocument_service import supabase_upload
-
 from services.background_service import index_document
 
 from .document_model import Document, DocumentStatus
@@ -14,15 +12,14 @@ from .document_schema import UpdateDocument
 
 from src.users.user_model import Role
 
-from langchain_chroma import Chroma # pyright: ignore[reportMissingImports]
-from langchain_google_genai import GoogleGenerativeAIEmbeddings # pyright: ignore[reportMissingImports]
+from langchain_chroma import Chroma  # pyright: ignore[reportMissingImports]
+from langchain_google_genai import GoogleGenerativeAIEmbeddings  # pyright: ignore[reportMissingImports]
 
 
 class DocumentService:
 
     def __init__(self, db: Session = Depends(get_db)):
         self.db = db
-        self.arq_service = ArqService()
 
         self.embeddings = GoogleGenerativeAIEmbeddings(
             model="gemini-embedding-2-preview",
@@ -89,16 +86,23 @@ class DocumentService:
 
         # Refresh so document.id is available
         self.db.refresh(document)
+
         try:
+            # ----------------------------------------------------
+            # Mark document as queued
+            # ----------------------------------------------------
+
             document.status = DocumentStatus.QUEUED
             self.db.commit()
 
+            # ----------------------------------------------------
+            # DIRECT INDEXING
+            # No ARQ worker / Redis queue
+            # ----------------------------------------------------
 
-            await self.arq_service.enqueue_index_job(document.id)
-
+            await index_document(document.id)
 
             self.db.refresh(document)
-
 
         except Exception:
             document.status = DocumentStatus.FAILED
@@ -125,7 +129,6 @@ class DocumentService:
     # ============================================================
 
     def get_document(self, id: int):
-        # sourcery skip: reintroduce-else, swap-if-else-branches, use-named-expression
 
         document = (
             self.db
@@ -264,13 +267,17 @@ class DocumentService:
             self.db.commit()
 
             # ----------------------------------------------------
-            # Add indexing job to ARQ queue
+            # DIRECT INDEXING
+            # No ARQ queue
+            # No Redis worker
             # ----------------------------------------------------
 
-            await self.arq_service.enqueue_index_job(document.id)
+            await index_document(document.id)
+
+            self.db.refresh(document)
 
             return {
-                "message": "Indexing job queued successfully"
+                "message": "Document indexed successfully"
             }
 
         except Exception as e:
@@ -288,7 +295,6 @@ class DocumentService:
     # ============================================================
 
     def ingestion_status(self, document_id: int):
-        # sourcery skip: reintroduce-else, swap-if-else-branches, use-named-expression
 
         document = (
             self.db
@@ -310,7 +316,6 @@ class DocumentService:
     # ============================================================
 
     def get_chromaDB(self):
-        # sourcery skip: inline-immediately-returned-variable
 
         vector_store = Chroma(
             persist_directory="./genAI/vector_db",

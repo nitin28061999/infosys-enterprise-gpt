@@ -27,8 +27,7 @@ class IndexingService:
 indexingService = IndexingService()
 
 
-async def index_document(ctx, id: int):
-
+async def index_document(id: int):
 
     db = SessionLocal()
 
